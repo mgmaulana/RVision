@@ -171,7 +171,7 @@
                             <span class="text-[9px] text-gray-400 font-bold tracking-[0.22em] uppercase mt-1">Streaming &amp; Music</span>
                         </div>
                         <span class="brand-fallback hidden flex flex-col text-white">
-                            <span class="text-base font-black tracking-wide"><span class="text-red-500">MG</span> VISION</span>
+                            <span class="text-base font-black tracking-wide"><span class="text-red-500">R</span> VISION</span>
                             <span class="text-[8px] font-bold uppercase tracking-[0.18em] text-gray-400">Streaming &amp; Music</span>
                         </span>
                     </a>
@@ -298,7 +298,7 @@
                 <div class="brand-logo flex items-center justify-center gap-2 sm:gap-3" aria-label="R Vision">
                     <img data-embedded-image="brandR" alt="" onerror="showBrandFallback(this)" class="h-9 w-9 object-contain sm:h-14 sm:w-14">
                     <img data-embedded-image="wordmark" alt="" onerror="showBrandFallback(this)" class="vision-wordmark-image h-7 w-auto object-contain sm:h-12">
-                    <span class="brand-fallback hidden text-xl font-black tracking-wide text-white sm:text-3xl"><span class="text-red-500">MG</span> VISION</span>
+                    <span class="brand-fallback hidden text-xl font-black tracking-wide text-white sm:text-3xl"><span class="text-red-500">R</span> VISION</span>
                 </div>
 
                 <p class="max-w-2xl text-[11px] leading-snug text-gray-300 sm:text-base sm:leading-relaxed">
@@ -528,7 +528,7 @@
                             <img data-embedded-image="brandR" alt="" onerror="showBrandFallback(this)" class="h-[1em] w-auto object-contain">
                             <img data-embedded-image="wordmark" alt="" onerror="showBrandFallback(this)" class="vision-wordmark-image h-[1em] w-auto object-contain">
                         </span>
-                        <span class="brand-fallback hidden font-black tracking-wide text-white"><span class="text-red-500">MG</span> VISION</span>
+                        <span class="brand-fallback hidden font-black tracking-wide text-white"><span class="text-red-500">R</span> VISION</span>
                     </span>
                     <button onclick="openAdminModal()" class="text-gray-500 hover:text-red-400 text-xs transition-colors ml-2" title="Akses Admin Panel">
                         <i class="fa-solid fa-lock"></i>
@@ -665,19 +665,19 @@
 
         <!-- ORDER MODAL (WHATSAPP CHECKOUT) -->
         <div id="orderModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-            <div class="glass-panel w-full max-w-md rounded-2xl border border-gray-800 p-6 relative space-y-5 shadow-2xl animate-in fade-in zoom-in duration-200">
+            <div class="glass-panel w-full max-w-md rounded-2xl border border-gray-800 p-4 sm:p-6 relative space-y-4 sm:space-y-5 shadow-2xl animate-in fade-in zoom-in duration-200">
                 <!-- Close Button -->
                 <button onclick="closeOrderModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg w-8 h-8 rounded-full bg-gray-800/50 flex items-center justify-center">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
 
                 <!-- Modal Header -->
-                <div class="flex items-center gap-3 border-b border-gray-800 pb-3">
-                    <div id="modal-product-icon" class="w-12 h-12 rounded-xl bg-red-600/20 text-red-500 flex items-center justify-center text-2xl font-bold">
+                <div class="flex items-center gap-2.5 sm:gap-3 border-b border-gray-800 pb-3">
+                    <div id="modal-product-icon" class="h-11 w-11 shrink-0 sm:h-12 sm:w-12 rounded-xl bg-gray-900 border border-gray-800 flex items-center justify-center text-2xl font-bold overflow-hidden">
                         <i class="fa-solid fa-play"></i>
                     </div>
-                    <div>
-                        <h3 id="modal-product-name" class="text-base font-bold text-white">Nama Produk</h3>
+                    <div class="min-w-0 flex-1 pr-8">
+                        <h3 id="modal-product-name" class="text-sm sm:text-base font-bold text-white break-words">Nama Produk</h3>
                         <p id="modal-product-tag" class="text-xs text-gray-400">Pilih Varian &amp; Masa Aktif</p>
                     </div>
                 </div>
@@ -687,7 +687,7 @@
                     <!-- Select Account Type -->
                     <div class="space-y-1.5">
                         <label class="text-xs font-semibold text-gray-300">Tipe Akun:</label>
-                        <div class="grid grid-cols-2 gap-2">
+                        <div id="account-type-options" class="grid grid-cols-2 gap-2">
                             <button type="button" onclick="selectType('sharing')" id="type-sharing" class="type-btn p-2.5 rounded-xl border border-red-500 bg-red-500/10 text-white font-bold text-xs flex flex-col items-center gap-1">
                                 <span>Sharing</span>
                                 <span class="text-[10px] font-normal text-gray-400">1 Device / Profile</span>
@@ -18621,6 +18621,11 @@
 
             // Admin PIN (Default: 1234)
             const DEFAULT_ADMIN_PIN = "1234";
+            const productsWithoutPrivatePrices = new Set(['spotify', 'hbo', 'iqiyi']);
+
+            function supportsPrivateAccount(product) {
+                return !!product && !productsWithoutPrivatePrices.has(product.id);
+            }
 
             // Default Catalog Data supporting 7 Hari, 1 Bulan, and 3 Bulan
             const defaultProducts = [
@@ -18651,7 +18656,6 @@
                     icon: 'fa-spotify',
                     brandColor: 'text-emerald-400',
                     sharingPrices: { '7d': 5000, '1m': 15000, '3m': 40000 },
-                    privatePrices: { '7d': 15000, '1m': 45000, '3m': 125000 },
                     badge: 'No Ads'
                 },
                 {
@@ -18661,7 +18665,6 @@
                     icon: 'fa-video',
                     brandColor: 'text-purple-400',
                     sharingPrices: { '7d': 8000, '1m': 22000, '3m': 62000 },
-                    privatePrices: { '7d': 28000, '1m': 85000, '3m': 240000 },
                     badge: 'Short Drama'
                 },
                 {
@@ -18701,7 +18704,6 @@
                     icon: 'fa-film',
                     brandColor: 'text-emerald-400',
                     sharingPrices: { '7d': 5000, '1m': 14000, '3m': 38000 },
-                    privatePrices: { '7d': 15000, '1m': 42000, '3m': 115000 },
                     badge: 'C-Drama & Anime'
                 },
                 {
@@ -18750,13 +18752,18 @@
                     const savedAdmin2Enabled = localStorage.getItem('mg_vision_admin2_enabled');
                     products = savedProducts ? JSON.parse(savedProducts) : JSON.parse(JSON.stringify(defaultProducts));
                     products = products.map(p => {
+                        let normalizedProduct = p;
                         if (p.id === 'hbo' && (!p.name || p.name.includes('HBO Max'))) {
-                            return { ...p, name: 'DramaBox', badge: 'Short Drama' };
+                            normalizedProduct = { ...p, name: 'DramaBox', badge: 'Short Drama' };
+                        } else if (p.id === 'vidio' && p.name === 'Vidio Platinum / League') {
+                            normalizedProduct = { ...p, name: 'Vidio Platinum' };
                         }
-                        if (p.id === 'vidio' && p.name === 'Vidio Platinum / League') {
-                            return { ...p, name: 'Vidio Platinum' };
+                        if (productsWithoutPrivatePrices.has(normalizedProduct.id)) {
+                            normalizedProduct = { ...normalizedProduct };
+                            delete normalizedProduct.privatePrices;
+                            delete normalizedProduct.privatePrice;
                         }
-                        return p;
+                        return normalizedProduct;
                     });
                     if (!products.some(p => p.id === 'chatgpt')) {
                         products.push(JSON.parse(JSON.stringify(defaultProducts.find(p => p.id === 'chatgpt'))));
@@ -19175,8 +19182,22 @@
                 
                 const iconContainer = document.getElementById('modal-product-icon');
                 const isBrandIcon = selectedProduct.icon.includes('spotify') || selectedProduct.icon.includes('youtube');
-                iconContainer.className = `w-12 h-12 rounded-xl bg-gray-900 border border-gray-800 flex items-center justify-center text-2xl font-bold ${selectedProduct.brandColor}`;
-                iconContainer.innerHTML = `<i class="${isBrandIcon ? 'fa-brands ' + selectedProduct.icon : 'fa-solid ' + selectedProduct.icon}"></i>`;
+                iconContainer.className = `h-11 w-11 shrink-0 sm:h-12 sm:w-12 rounded-xl bg-gray-900 border border-gray-800 flex items-center justify-center text-2xl font-bold overflow-hidden ${selectedProduct.brandColor}`;
+                iconContainer.replaceChildren();
+
+                const productLogo = productLogos[selectedProduct.id];
+                if (productLogo) {
+                    const logoImage = document.createElement('img');
+                    logoImage.src = productLogo;
+                    logoImage.alt = `${selectedProduct.name} logo`;
+                    logoImage.className = 'h-full w-full rounded-xl object-contain p-1.5';
+                    iconContainer.appendChild(logoImage);
+                } else {
+                    const productIcon = document.createElement('i');
+                    productIcon.className = `${isBrandIcon ? 'fa-brands ' + selectedProduct.icon : 'fa-solid ' + selectedProduct.icon}`;
+                    productIcon.setAttribute('aria-hidden', 'true');
+                    iconContainer.appendChild(productIcon);
+                }
 
                 document.getElementById('select-duration').value = initialDur;
                 document.getElementById('order-error-msg').classList.add('hidden');
@@ -19196,9 +19217,11 @@
             }
 
             function selectType(type) {
-                selectedAccountType = type === 'private' ? 'private' : 'sharing';
+                const privateAvailable = supportsPrivateAccount(selectedProduct);
+                selectedAccountType = type === 'private' && privateAvailable ? 'private' : 'sharing';
                 const sharingBtn = document.getElementById('type-sharing');
                 const privateBtn = document.getElementById('type-private');
+                const accountTypeOptions = document.getElementById('account-type-options');
 
                 if (sharingBtn) {
                     sharingBtn.className = selectedAccountType === 'sharing'
@@ -19210,6 +19233,11 @@
                     privateBtn.className = selectedAccountType === 'private'
                         ? 'type-btn p-2.5 rounded-xl border border-red-500 bg-red-500/10 text-white font-bold text-xs flex flex-col items-center gap-1'
                         : 'type-btn p-2.5 rounded-xl border border-gray-800 bg-gray-900 text-gray-400 font-bold text-xs flex flex-col items-center gap-1';
+                    privateBtn.classList.toggle('hidden', !privateAvailable);
+                }
+
+                if (accountTypeOptions) {
+                    accountTypeOptions.className = `grid ${privateAvailable ? 'grid-cols-2' : 'grid-cols-1'} gap-2`;
                 }
 
                 calculateTotal();
@@ -19226,7 +19254,8 @@
                 }
 
                 const durKey = durationSelectEl.value || '1m';
-                const prices = selectedAccountType === 'sharing' ? selectedProduct.sharingPrices : selectedProduct.privatePrices;
+                const usePrivatePrice = selectedAccountType === 'private' && supportsPrivateAccount(selectedProduct);
+                const prices = usePrivatePrice ? selectedProduct.privatePrices : selectedProduct.sharingPrices;
                 const amount = prices && typeof prices[durKey] === 'number' ? prices[durKey] : 0;
                 totalPriceEl.innerText = `Rp ${amount.toLocaleString('id-ID')}`;
             }
@@ -19558,6 +19587,7 @@
                                     </div>
                                 </div>
 
+                                ${supportsPrivateAccount(p) ? `
                                 <div class="space-y-1.5">
                                     <span class="text-[11px] font-semibold text-blue-400 block">Harga Private:</span>
                                     <div class="grid grid-cols-3 gap-2">
@@ -19575,6 +19605,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                ` : ''}
                             </div>
                         `;
                     }).join('');
