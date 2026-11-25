@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>MG Vision - Jasa Layanan Akun Streaming & Music Premium</title>
+        <title>R Vision - Jasa Layanan Akun Streaming & Music Premium</title>
         <link rel="icon" type="image/png" data-embedded-image="brandR">
         
         <!-- Tailwind CSS CDN -->
@@ -159,7 +159,7 @@
             <div class="relative max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-16 sm:h-20">
                     
-                    <!-- Brand MG Vision with Logo on the Left -->
+                    <!-- Brand R Vision with Logo on the Left -->
                     <a href="#" class="brand-logo flex items-center gap-1 group">
                         <!-- Brand logo icon -->
                         <div class="h-12 w-12 sm:h-14 sm:w-14 shrink-0 bg-black/60 rounded-xl p-1 border border-red-600/30 shadow-lg shadow-red-600/20 flex items-center justify-center group-hover:border-red-500/60 transition-all">
@@ -189,42 +189,9 @@
                         </a>
                     </div>
 
-                    <!-- Right Corner: Admin Contact Button -->
-                    <div class="relative flex items-center gap-2 sm:gap-3">
-                        <button type="button" id="btn-nav-wa" aria-label="Hubungi Admin" onclick="toggleWaContactMenu(event)" class="px-2.5 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold text-xs sm:text-sm shadow-lg shadow-red-600/30 flex items-center gap-1.5 sm:gap-2 transition-all active:scale-95">
-                            <i class="fa-brands fa-whatsapp text-base sm:text-lg"></i>
-                            <span class="hidden sm:inline">Hubungi Admin</span>
-                            <i class="hidden sm:inline fa-solid fa-chevron-down text-[10px] ml-0.5"></i>
-                        </button>
-
-                        <!-- WA Admin Choice Menu -->
-                        <div id="wa-contact-menu" class="hidden absolute right-0 top-full mt-2 w-60 rounded-2xl glass-panel border border-gray-700/80 p-2 shadow-2xl z-50 space-y-1.5">
-                            <div class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-gray-400">
-                                Pilih Kontak WhatsApp
-                            </div>
-                            <a id="btn-nav-wa-1" data-msg="Halo Admin 1 MG Vision, saya butuh bantuan" href="https://wa.me/6281234567890?text=Halo%20Admin%201%20MG%20Vision,%20saya%20butuh%20bantuan" target="_blank" onclick="closeWaContactMenu()" class="admin-wa-link flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl bg-gray-900/80 hover:bg-emerald-600/20 border border-gray-800 hover:border-emerald-500/40 text-white text-xs font-bold transition-all">
-                                <span class="flex items-center gap-2 shrink-0">
-                                    <i class="fa-brands fa-whatsapp text-emerald-400 text-base"></i>
-                                    <span>Admin 1</span>
-                                </span>
-                                <span class="wa-number-label-1 text-[10px] font-mono text-gray-400 truncate">+6281234567890</span>
-                            </a>
-                            <a id="btn-nav-wa-2" data-msg="Halo Admin 2 MG Vision, saya butuh bantuan" href="https://wa.me/6289876543210?text=Halo%20Admin%202%20MG%20Vision,%20saya%20butuh%20bantuan" target="_blank" onclick="closeWaContactMenu()" class="admin-wa-link-2 flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl bg-gray-900/80 hover:bg-teal-600/20 border border-gray-800 hover:border-teal-500/40 text-white text-xs font-bold transition-all">
-                                <span class="flex items-center gap-2 shrink-0">
-                                    <i class="fa-brands fa-whatsapp text-teal-400 text-base"></i>
-                                    <span>Admin 2</span>
-                                </span>
-                                <span class="wa-number-label-2 text-[10px] font-mono text-gray-400 truncate">+6289876543210</span>
-                            </a>
-                            <div id="nav-no-admin-msg" class="hidden px-3 py-2 rounded-xl bg-gray-900/70 border border-gray-800 text-[11px] text-amber-400 text-center">
-                                Semua kontak WhatsApp Admin sedang OFF.
-                            </div>
-                        </div>
-
-                        <button type="button" id="btn-mobile-nav" class="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-gray-700 bg-gray-900/70 text-white hover:border-red-500 hover:text-red-400 focus:outline-none focus:ring-2 focus:ring-red-500" aria-label="Buka menu navigasi" aria-expanded="false" aria-controls="mobile-nav-panel" onclick="toggleMobileNav(event)">
-                            <i class="fa-solid fa-bars text-lg" aria-hidden="true"></i>
-                        </button>
-                    </div>
+                    <button type="button" id="btn-mobile-nav" class="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-gray-700 bg-gray-900/70 text-white hover:border-red-500 hover:text-red-400 focus:outline-none focus:ring-2 focus:ring-red-500" aria-label="Buka menu navigasi" aria-expanded="false" aria-controls="mobile-nav-panel" onclick="toggleMobileNav(event)">
+                        <i class="fa-solid fa-bars text-lg" aria-hidden="true"></i>
+                    </button>
 
                 </div>
             </div>
@@ -233,7 +200,7 @@
                 <aside id="mobile-nav-panel" class="mobile-nav-panel ml-auto flex h-full w-80 max-w-[88vw] flex-col border-l border-gray-700/80 bg-[#101017] p-5 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="mobile-nav-title" tabindex="-1">
                     <div class="mb-7 flex items-center justify-between border-b border-gray-800 pb-5">
                         <div>
-                            <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-red-400">MG VISION</p>
+                            <p class="text-[10px] font-bold tracking-[0.2em] text-red-400">R Vision</p>
                             <h2 id="mobile-nav-title" class="mt-1 text-lg font-black text-white">Menu Navigasi</h2>
                         </div>
                         <button type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-gray-700 text-gray-300 hover:border-red-500 hover:text-white" aria-label="Tutup menu" onclick="closeMobileNav()">
@@ -256,6 +223,35 @@
                     </nav>
                     <p class="mt-auto border-t border-gray-800 pt-4 text-xs leading-relaxed text-gray-500">Pilih menu untuk menuju bagian yang Anda perlukan.</p>
                 </aside>
+        </div>
+
+        <div class="fixed bottom-4 right-4 z-50 flex flex-col items-end">
+            <div id="wa-contact-menu" class="hidden mb-3 w-60 rounded-2xl glass-panel border border-gray-700/80 p-2 shadow-2xl space-y-1.5" aria-label="Pilih kontak WhatsApp">
+                <div class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                    Pilih Kontak WhatsApp
+                </div>
+                <a id="btn-nav-wa-1" data-msg="Halo Admin 1 R Vision, saya butuh bantuan" href="https://wa.me/6281234567890?text=Halo%20Admin%201%20R%20Vision,%20saya%20butuh%20bantuan" target="_blank" onclick="closeWaContactMenu()" class="admin-wa-link flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl bg-gray-900/80 hover:bg-emerald-600/20 border border-gray-800 hover:border-emerald-500/40 text-white text-xs font-bold transition-all">
+                    <span class="flex items-center gap-2 shrink-0">
+                        <i class="fa-brands fa-whatsapp text-emerald-400 text-base"></i>
+                        <span>Admin 1</span>
+                    </span>
+                    <span class="hidden wa-number-label-1 text-[10px] font-mono text-gray-400 truncate">+6281234567890</span>
+                </a>
+                <a id="btn-nav-wa-2" data-msg="Halo Admin 2 R Vision, saya butuh bantuan" href="https://wa.me/6289876543210?text=Halo%20Admin%202%20R%20Vision,%20saya%20butuh%20bantuan" target="_blank" onclick="closeWaContactMenu()" class="admin-wa-link-2 flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl bg-gray-900/80 hover:bg-teal-600/20 border border-gray-800 hover:border-teal-500/40 text-white text-xs font-bold transition-all">
+                    <span class="flex items-center gap-2 shrink-0">
+                        <i class="fa-brands fa-whatsapp text-teal-400 text-base"></i>
+                        <span>Admin 2</span>
+                    </span>
+                    <span class="hidden wa-number-label-2 text-[10px] font-mono text-gray-400 truncate">+6289876543210</span>
+                </a>
+                <div id="nav-no-admin-msg" class="hidden px-3 py-2 rounded-xl bg-gray-900/70 border border-gray-800 text-[11px] text-amber-400 text-center">
+                    Semua kontak WhatsApp Admin sedang OFF.
+                </div>
+            </div>
+            <button type="button" id="btn-nav-wa" aria-label="Hubungi Admin via WhatsApp" aria-expanded="false" aria-controls="wa-contact-menu" title="Hubungi Admin" onclick="toggleWaContactMenu(event)" class="inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-xl shadow-emerald-950/50 ring-2 ring-white/15 transition-transform hover:scale-105 hover:bg-emerald-500 active:scale-95">
+                <i class="fa-brands fa-whatsapp text-3xl" aria-hidden="true"></i>
+                <span class="sr-only">Hubungi Admin via WhatsApp</span>
+            </button>
         </div>
 
         <!-- HERO SECTION -->
@@ -299,7 +295,7 @@
                     <span class="mt-1 block">Tanpa Batas di</span>
                 </h1>
 
-                <div class="brand-logo flex items-center justify-center gap-2 sm:gap-3" aria-label="MG Vision">
+                <div class="brand-logo flex items-center justify-center gap-2 sm:gap-3" aria-label="R Vision">
                     <img data-embedded-image="brandR" alt="" onerror="showBrandFallback(this)" class="h-9 w-9 object-contain sm:h-14 sm:w-14">
                     <img data-embedded-image="wordmark" alt="" onerror="showBrandFallback(this)" class="vision-wordmark-image h-7 w-auto object-contain sm:h-12">
                     <span class="brand-fallback hidden text-xl font-black tracking-wide text-white sm:text-3xl"><span class="text-red-500">MG</span> VISION</span>
@@ -373,7 +369,7 @@
                 <div class="border-b border-gray-800/80 pb-4">
                     <span class="px-3 py-1 rounded-md bg-red-500/10 text-red-400 font-semibold text-xs border border-red-500/20">Panduan Transaksi</span>
                     <h2 class="text-xl sm:text-2xl font-black text-white mt-2 flex items-center gap-2">
-                        <i class="fa-solid fa-shield-halved text-red-500"></i> Syarat &amp; Ketentuan (Rules) MG Vision
+                        <i class="fa-solid fa-shield-halved text-red-500"></i> Syarat &amp; Ketentuan (Rules) R Vision
                     </h2>
                     <p class="text-xs text-gray-400 mt-1">Harap membaca ketentuan di bawah ini untuk kelancaran penggunaan dan klaim garansi akun Anda.</p>
                 </div>
@@ -386,7 +382,7 @@
                         </div>
                         <div>
                             <h4 class="text-sm font-bold text-white">Butuh Klaim Garansi atau Cek Status Akun?</h4>
-                            <p class="text-xs text-gray-400">Sertakan screenshot kendala dan nomor invoice WhatsApp Anda ke Admin MG Vision.</p>
+                            <p class="text-xs text-gray-400">Sertakan screenshot kendala dan nomor invoice WhatsApp Anda ke Admin R Vision.</p>
                         </div>
                     </div>
                     <div class="relative z-30 shrink-0">
@@ -494,7 +490,7 @@
                             <i class="fa-solid fa-chevron-down text-xs text-gray-400 transition-transform group-open:rotate-180"></i>
                         </summary>
                         <p class="text-xs text-gray-400 mt-3 pt-3 border-t border-gray-800/60 leading-relaxed">
-                            Proses pengiriman akun sangat cepat, umumnya membutuhkan waktu 5 hingga 15 menit setelah konfirmasi pembayaran diterima oleh Admin MG Vision.
+                            Proses pengiriman akun sangat cepat, umumnya membutuhkan waktu 5 hingga 15 menit setelah konfirmasi pembayaran diterima oleh Admin R Vision.
                         </p>
                     </details>
 
@@ -515,7 +511,7 @@
                             <i class="fa-solid fa-chevron-down text-xs text-gray-400 transition-transform group-open:rotate-180"></i>
                         </summary>
                         <p class="text-xs text-gray-400 mt-3 pt-3 border-t border-gray-800/60 leading-relaxed">
-                            MG Vision mendukung pembayaran melalui QRIS All Payment (GoPay, OVO, DANA, ShopeePay, LinkAja) serta Transfer Bank resmi (BCA, Mandiri, BRI, BNI).
+                            R Vision mendukung pembayaran melalui QRIS All Payment (GoPay, OVO, DANA, ShopeePay, LinkAja) serta Transfer Bank resmi (BCA, Mandiri, BRI, BNI).
                         </p>
                     </details>
                 </div>
@@ -538,7 +534,7 @@
                         <i class="fa-solid fa-lock"></i>
                     </button>
                 </div>
-                <p>&copy; 2026 MG Vision - Jasa Layanan Streaming &amp; Musik Premium Resmi. All Rights Reserved.</p>
+                <p>&copy; 2026 R Vision - Jasa Layanan Streaming &amp; Musik Premium Resmi. All Rights Reserved.</p>
             </div>
         </footer>
 
@@ -556,7 +552,7 @@
                         <i class="fa-solid fa-sliders"></i>
                     </div>
                     <div>
-                        <h3 class="text-base font-bold text-white">Panel Kelola Admin MG Vision</h3>
+                        <h3 class="text-base font-bold text-white">Panel Kelola Admin R Vision</h3>
                         <p class="text-xs text-gray-400">Atur harga masing-masing produk dan nomor kontak WhatsApp admin.</p>
                     </div>
                 </div>
@@ -739,10 +735,10 @@
                     <div class="flex items-start gap-2 pt-1">
                         <input type="checkbox" id="agree-rules" onchange="clearOrderError()" class="mt-0.5 rounded border-gray-700 bg-gray-900 text-red-600 focus:ring-0 cursor-pointer">
                         <label for="agree-rules" class="text-[11px] text-gray-400 leading-tight cursor-pointer">
-                            Saya menyetujui <a href="#rules" onclick="closeOrderModal()" class="text-red-400 underline">Syarat &amp; Ketentuan (Rules) MG Vision</a> yang berlaku.
+                            Saya menyetujui <a href="#rules" onclick="closeOrderModal()" class="text-red-400 underline">Syarat &amp; Ketentuan (Rules) R Vision</a> yang berlaku.
                         </label>
                     </div>
-                    <p id="order-error-msg" class="text-xs text-red-400 hidden">Harap menyetujui Syarat &amp; Ketentuan (Rules) MG Vision terlebih dahulu.</p>
+                    <p id="order-error-msg" class="text-xs text-red-400 hidden">Harap menyetujui Syarat &amp; Ketentuan (Rules) R Vision terlebih dahulu.</p>
 
                     <!-- WhatsApp Checkout Button -->
                     <button onclick="submitOrderWhatsApp()" class="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold text-xs sm:text-sm shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition-all active:scale-95">
@@ -18789,7 +18785,7 @@
 
                 const links1 = document.querySelectorAll('.admin-wa-link');
                 links1.forEach(el => {
-                    const rawMsg = el.getAttribute('data-msg') || 'Halo Admin 1 MG Vision, saya butuh bantuan';
+                    const rawMsg = el.getAttribute('data-msg') || 'Halo Admin 1 R Vision, saya butuh bantuan';
                     el.setAttribute('href', `https://wa.me/${adminWaNumber}?text=${encodeURIComponent(rawMsg)}`);
                 });
 
@@ -18800,7 +18796,7 @@
 
                 const links2 = document.querySelectorAll('.admin-wa-link-2');
                 links2.forEach(el => {
-                    const rawMsg = el.getAttribute('data-msg') || 'Halo Admin 2 MG Vision, saya butuh bantuan';
+                    const rawMsg = el.getAttribute('data-msg') || 'Halo Admin 2 R Vision, saya butuh bantuan';
                     el.setAttribute('href', `https://wa.me/${adminWaNumber2}?text=${encodeURIComponent(rawMsg)}`);
                 });
 
@@ -18816,7 +18812,7 @@
                 const optionsContainer = document.getElementById('garansi-wa-options');
                 if (!optionsContainer) return;
 
-                const garansiMsg = encodeURIComponent('Halo Admin MG Vision, saya ingin klaim garansi akun');
+                const garansiMsg = encodeURIComponent('Halo Admin R Vision, saya ingin klaim garansi akun');
                 const items = [];
 
                 if (isAdmin1Enabled && adminWaNumber) {
@@ -18826,7 +18822,6 @@
                                 <i class="fa-brands fa-whatsapp text-emerald-400 text-sm"></i>
                                 <span>Admin 1</span>
                             </span>
-                            <span class="text-[10px] font-mono text-gray-300 truncate">+${adminWaNumber}</span>
                         </a>
                     `);
                 }
@@ -18838,7 +18833,6 @@
                                 <i class="fa-brands fa-whatsapp text-teal-400 text-sm"></i>
                                 <span>Admin 2</span>
                             </span>
-                            <span class="text-[10px] font-mono text-gray-300 truncate">+${adminWaNumber2}</span>
                         </a>
                     `);
                 }
@@ -18972,16 +18966,18 @@
             function toggleWaContactMenu(event) {
                 if (event) event.stopPropagation();
                 const menuEl = document.getElementById('wa-contact-menu');
-                if (menuEl) {
-                    menuEl.classList.toggle('hidden');
-                }
+                const buttonEl = document.getElementById('btn-nav-wa');
+                if (!menuEl || !buttonEl) return;
+                const isOpening = menuEl.classList.contains('hidden');
+                menuEl.classList.toggle('hidden', !isOpening);
+                buttonEl.setAttribute('aria-expanded', String(isOpening));
             }
 
             function closeWaContactMenu() {
                 const menuEl = document.getElementById('wa-contact-menu');
-                if (menuEl) {
-                    menuEl.classList.add('hidden');
-                }
+                const buttonEl = document.getElementById('btn-nav-wa');
+                if (menuEl) menuEl.classList.add('hidden');
+                if (buttonEl) buttonEl.setAttribute('aria-expanded', 'false');
             }
 
             function toggleMobileNav(event) {
@@ -19069,7 +19065,7 @@
                 const btnEl = document.getElementById('btn-nav-wa');
                 if (menuEl && !menuEl.classList.contains('hidden')) {
                     if (!menuEl.contains(event.target) && (!btnEl || !btnEl.contains(event.target))) {
-                        menuEl.classList.add('hidden');
+                        closeWaContactMenu();
                     }
                 }
 
@@ -19083,7 +19079,10 @@
             });
 
             document.addEventListener('keydown', function(event) {
-                if (event.key === 'Escape') closeMobileNav();
+                if (event.key === 'Escape') {
+                    closeMobileNav();
+                    closeWaContactMenu();
+                }
             });
 
             window.addEventListener('resize', function() {
@@ -19326,12 +19325,12 @@
                 const targetNumber = useAdmin2 ? adminWaNumber2 : adminWaNumber;
                 const adminLabel = useAdmin2 ? 'Admin 2' : 'Admin 1';
 
-                const message = `Halo ${adminLabel} MG Vision, saya ingin memesan akun premium:%0A%0A` +
+                const message = `Halo ${adminLabel} R Vision, saya ingin memesan akun premium:%0A%0A` +
                                 `📌 *Produk:* ${selectedProduct.name}%0A` +
                                 `👤 *Tipe Akun:* ${selectedAccountType.toUpperCase()}%0A` +
                                 `⏳ *Durasi:* ${durText}%0A` +
                                 `💰 *Total Harga:* Rp ${total}%0A` +
-                                `✅ *Persetujuan Rules:* Ya (Setuju Rules MG Vision)%0A%0A` +
+                                `✅ *Persetujuan Rules:* Ya (Setuju Rules R Vision)%0A%0A` +
                                 `Mohon diproses invoice pemesanannya, terima kasih!`;
 
                 window.open(`https://wa.me/${targetNumber}?text=${message}`, '_blank');
