@@ -56,6 +56,37 @@
                 display: none !important;
             }
 
+            .hero-banner {
+                aspect-ratio: 4 / 5;
+                min-height: 390px;
+            }
+
+            .hero-slide {
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 450ms ease;
+                visibility: hidden;
+            }
+
+            .hero-slide[aria-hidden="false"] {
+                opacity: 1;
+                pointer-events: auto;
+                visibility: visible;
+            }
+
+            @media (min-width: 768px) {
+                .hero-banner {
+                    aspect-ratio: 1920 / 700;
+                    max-height: 700px;
+                }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                .hero-slide {
+                    transition-duration: 0.01ms;
+                }
+            }
+
             .mobile-nav-overlay {
                 background: rgba(3, 5, 12, 0.72);
                 opacity: 0;
@@ -255,7 +286,7 @@
         </div>
 
         <!-- HERO SECTION -->
-        <header class="relative isolate overflow-hidden bg-[#050817] px-4 py-7 text-center sm:px-6 sm:py-10 lg:py-12">
+        <header id="hero-banner" class="hero-banner relative isolate overflow-hidden bg-[#050817] text-center" role="region" aria-roledescription="carousel" aria-label="Banner promosi R Vision">
             <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_45%,rgba(31,45,105,0.28),transparent_58%),linear-gradient(115deg,#030816_0%,#080817_58%,#160811_100%)] pointer-events-none"></div>
             <div class="absolute -top-28 left-1/2 h-64 w-[min(90vw,56rem)] -translate-x-1/2 rounded-full bg-blue-600/10 blur-[90px] pointer-events-none"></div>
 
@@ -284,45 +315,73 @@
                 <path d="M-40 225 C160 145 290 295 470 225 S780 145 950 215 1210 290 1480 160" fill="none" stroke="url(#heroWaveBottom)" stroke-width="1" opacity=".45" />
             </svg>
 
-            <div class="relative z-10 mx-auto flex max-w-6xl flex-col items-center gap-2 sm:gap-4">
-                <span class="inline-flex items-center gap-2 rounded-full border border-red-500/40 bg-red-500/10 px-3 py-1.5 text-[10px] font-bold tracking-wide text-red-400 sm:px-4 sm:py-2 sm:text-sm">
-                    <span class="h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
-                    Provider Premium Resmi &amp; Terpercaya
-                </span>
+            <div id="hero-slide-1" class="hero-slide absolute inset-0 z-10 flex items-center justify-center px-4 py-7 pb-16 text-center sm:px-6 sm:py-10 sm:pb-20 lg:py-12" role="group" aria-roledescription="slide" aria-label="1 dari 2" aria-hidden="false">
+                <div class="mx-auto flex max-w-6xl flex-col items-center gap-2 sm:gap-4">
+                    <span class="inline-flex items-center gap-2 rounded-full border border-red-500/40 bg-red-500/10 px-3 py-1.5 text-[10px] font-bold tracking-wide text-red-400 sm:px-4 sm:py-2 sm:text-sm">
+                        <span class="h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
+                        Provider Premium Resmi &amp; Terpercaya
+                    </span>
 
-                <h1 class="text-[1.45rem] font-black leading-[1.05] tracking-tight text-white sm:text-4xl lg:text-6xl">
-                    <span class="block">Streaming Film &amp; Musik</span>
-                    <span class="mt-1 block">Tanpa Batas di</span>
-                </h1>
+                    <h1 class="text-[1.45rem] font-black leading-[1.05] tracking-tight text-white sm:text-4xl lg:text-6xl">
+                        <span class="block">Streaming Film &amp; Musik</span>
+                        <span class="mt-1 block">Tanpa Batas di</span>
+                    </h1>
 
-                <div class="brand-logo flex items-center justify-center gap-2 sm:gap-3" aria-label="R Vision">
-                    <img data-embedded-image="brandR" alt="" onerror="showBrandFallback(this)" class="h-9 w-9 object-contain sm:h-14 sm:w-14">
-                    <img data-embedded-image="wordmark" alt="" onerror="showBrandFallback(this)" class="vision-wordmark-image h-7 w-auto object-contain sm:h-12">
-                    <span class="brand-fallback hidden text-xl font-black tracking-wide text-white sm:text-3xl"><span class="text-red-500">R</span> VISION</span>
+                    <div class="brand-logo flex items-center justify-center gap-2 sm:gap-3" aria-label="R Vision">
+                        <img data-embedded-image="brandR" alt="" onerror="showBrandFallback(this)" class="h-9 w-9 object-contain sm:h-14 sm:w-14">
+                        <img data-embedded-image="wordmark" alt="" onerror="showBrandFallback(this)" class="vision-wordmark-image h-7 w-auto object-contain sm:h-12">
+                        <span class="brand-fallback hidden text-xl font-black tracking-wide text-white sm:text-3xl"><span class="text-red-500">R</span> VISION</span>
+                    </div>
+
+                    <div class="grid w-full max-w-3xl grid-cols-3 items-center gap-1.5 text-left sm:flex sm:justify-center sm:gap-8">
+                        <div class="flex items-center justify-center gap-1 text-[9px] font-semibold text-white sm:gap-3 sm:text-base">
+                            <i class="fa-solid fa-headphones-simple text-base text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.8)] sm:text-2xl"></i>
+                            <span>Jutaan Musik</span>
+                        </div>
+                        <div class="flex items-center justify-center gap-1 text-[9px] font-semibold text-white sm:gap-3 sm:text-base">
+                            <i class="fa-solid fa-film text-base text-red-400 drop-shadow-[0_0_10px_rgba(248,113,113,0.8)] sm:text-2xl"></i>
+                            <span>Film &amp; Acara TV</span>
+                        </div>
+                        <div class="flex items-center justify-center gap-1 text-[9px] font-semibold text-white sm:gap-3 sm:text-base">
+                            <i class="fa-solid fa-laptop-mobile text-base text-purple-400 drop-shadow-[0_0_10px_rgba(192,132,252,0.8)] sm:text-2xl"></i>
+                            <span>Bisa di Semua Perangkat</span>
+                        </div>
+                    </div>
+
+                    <a href="#katalog" class="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-red-600 to-red-700 px-7 py-1.5 text-xs font-black text-white shadow-lg shadow-red-600/30 transition-all hover:from-red-500 hover:to-red-600 active:scale-95 sm:px-9 sm:py-3 sm:text-base">
+                        Coba Sekarang
+                    </a>
                 </div>
+            </div>
 
-                <p class="max-w-2xl text-[11px] leading-snug text-gray-300 sm:text-base sm:leading-relaxed">
-                    Nikmati akses akun premium Netflix, Disney+, Spotify, HBO Max, Vidio, Viu &amp; YouTube Premium dengan proses cepat dan garansi penuh.
-                </p>
-
-                <div class="grid w-full max-w-3xl grid-cols-3 items-center gap-1.5 text-left sm:flex sm:justify-center sm:gap-8">
-                    <div class="flex items-center justify-center gap-1 text-[9px] font-semibold text-white sm:gap-3 sm:text-base">
-                        <i class="fa-solid fa-headphones-simple text-base text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.8)] sm:text-2xl"></i>
-                        <span>Jutaan Musik</span>
-                    </div>
-                    <div class="flex items-center justify-center gap-1 text-[9px] font-semibold text-white sm:gap-3 sm:text-base">
-                        <i class="fa-solid fa-film text-base text-red-400 drop-shadow-[0_0_10px_rgba(248,113,113,0.8)] sm:text-2xl"></i>
-                        <span>Film &amp; Acara TV</span>
-                    </div>
-                    <div class="flex items-center justify-center gap-1 text-[9px] font-semibold text-white sm:gap-3 sm:text-base">
-                        <i class="fa-solid fa-laptop-mobile text-base text-purple-400 drop-shadow-[0_0_10px_rgba(192,132,252,0.8)] sm:text-2xl"></i>
-                        <span>Bisa di Semua Perangkat</span>
-                    </div>
+            <div id="hero-slide-2" class="hero-slide absolute inset-0 z-10 overflow-hidden bg-[#050505]" role="group" aria-roledescription="slide" aria-label="2 dari 2" aria-hidden="true">
+                <div class="absolute inset-x-0 top-0 h-[55%] bg-[#050505] md:inset-0 md:h-full">
+                    <img src="r-vision-banner-slide-2.jpg" width="1813" height="768" alt="Banner promosi R Vision untuk layanan streaming dan musik premium" class="h-full w-full object-contain">
                 </div>
-
-                <a href="#katalog" class="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-red-600 to-red-700 px-7 py-1.5 text-xs font-black text-white shadow-lg shadow-red-600/30 transition-all hover:from-red-500 hover:to-red-600 active:scale-95 sm:px-9 sm:py-3 sm:text-base">
-                    Coba Sekarang
+                <div class="absolute inset-x-5 bottom-16 z-10 flex flex-col items-center gap-2 text-center md:hidden">
+                    <h2 class="text-xl font-black leading-tight text-white">Streaming &amp; Music Unlimited</h2>
+                    <p class="max-w-xs text-xs leading-relaxed text-gray-300">Temukan hiburan premium favoritmu bersama R Vision.</p>
+                    <span class="inline-flex items-center gap-2 rounded-full bg-red-600 px-5 py-2 text-xs font-bold text-white shadow-lg shadow-red-950/50">
+                        Lihat Katalog <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <a href="#katalog" class="absolute inset-0 z-20" aria-label="Lihat katalog produk R Vision">
+                    <span class="sr-only">Lihat katalog produk R Vision</span>
                 </a>
+            </div>
+
+            <div class="pointer-events-none absolute inset-x-3 top-1/2 z-40 hidden -translate-y-1/2 justify-between sm:flex sm:inset-x-6">
+                <button type="button" onclick="changeHeroSlide(-1)" class="pointer-events-auto inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/55 text-white shadow-lg transition-colors hover:bg-red-600 sm:h-11 sm:w-11" aria-label="Banner sebelumnya">
+                    <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+                </button>
+                <button type="button" onclick="changeHeroSlide(1)" class="pointer-events-auto inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/55 text-white shadow-lg transition-colors hover:bg-red-600 sm:h-11 sm:w-11" aria-label="Banner berikutnya">
+                    <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            <div class="absolute bottom-3 left-1/2 z-40 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/55 px-3 py-2" aria-label="Pilih banner">
+                <button type="button" data-hero-dot="0" onclick="showHeroSlide(0)" class="h-2.5 w-2.5 rounded-full bg-white transition-all" aria-label="Tampilkan banner 1" aria-current="true"></button>
+                <button type="button" data-hero-dot="1" onclick="showHeroSlide(1)" class="h-2.5 w-2.5 rounded-full bg-white/40 transition-all" aria-label="Tampilkan banner 2" aria-current="false"></button>
             </div>
         </header>
 
@@ -410,7 +469,7 @@
                     <!-- Rule Card 1 -->
                     <div class="glass-card p-5 rounded-2xl border border-gray-800 space-y-2">
                         <div class="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center font-bold text-base">
-                            <i class="fa-solid fa-laptop-mobile"></i>
+                            <i class="fa-solid fa-desktop" aria-hidden="true"></i>
                         </div>
                         <h3 class="text-sm font-bold text-white">1. Batas Device &amp; Login</h3>
                         <p class="text-xs text-gray-400 leading-relaxed">
@@ -475,6 +534,18 @@
                 </div>
             </section>
 
+            <!-- CUSTOMER TESTIMONIALS -->
+            <section id="testimonials" class="space-y-6 pt-4">
+                <div class="border-b border-gray-800/80 pb-4">
+                    <h2 class="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
+                        <i class="fa-solid fa-comments text-red-500"></i> Testimoni Customer
+                    </h2>
+                </div>
+                <div id="customer-testimonial-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <p class="md:col-span-2 lg:col-span-3 text-center text-sm text-gray-400 py-6">Testimoni pelanggan akan tampil di sini.</p>
+                </div>
+            </section>
+
             <!-- FAQ SECTION -->
             <section id="faq" class="space-y-6 pt-4">
                 <div class="border-b border-gray-800/80 pb-4">
@@ -517,6 +588,16 @@
                 </div>
             </section>
 
+            <!-- SOCIAL LINKS -->
+            <section id="social-links" class="mt-8 rounded-2xl border border-gray-800 bg-[#07070A] p-5 sm:p-6 text-center">
+                <h2 class="text-sm font-black uppercase tracking-wide text-red-500">Follow Kami</h2>
+                <div id="social-link-list" class="mt-4 flex items-center justify-center gap-5">
+                    <span class="text-gray-500" aria-label="Instagram belum diatur"><i class="fa-brands fa-instagram text-xl"></i></span>
+                    <span class="text-gray-500" aria-label="TikTok belum diatur"><i class="fa-brands fa-tiktok text-xl"></i></span>
+                    <span class="text-gray-500" aria-label="YouTube belum diatur"><i class="fa-brands fa-youtube text-xl"></i></span>
+                </div>
+            </section>
+
         </main>
 
         <!-- FOOTER -->
@@ -553,7 +634,7 @@
                     </div>
                     <div>
                         <h3 class="text-base font-bold text-white">Panel Kelola Admin R Vision</h3>
-                        <p class="text-xs text-gray-400">Atur harga masing-masing produk dan nomor kontak WhatsApp admin.</p>
+                        <p class="text-xs text-gray-400">Kelola harga, kontak, media sosial, testimoni, dan data penjualan.</p>
                     </div>
                 </div>
 
@@ -577,13 +658,17 @@
                 <div id="admin-content-view" class="hidden space-y-5">
                     <!-- Category Selector Bubbles for Admin Controls -->
                     <div class="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-gray-950/80 border border-gray-800/90">
-                        <button type="button" id="admin-bubble-wa" onclick="switchAdminSection('wa')" class="flex-1 min-w-[160px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all bg-emerald-600 text-white shadow-md shadow-emerald-600/25">
-                            <i class="fa-brands fa-whatsapp text-sm"></i>
-                            <span>Nomor WhatsApp Admin</span>
-                        </button>
                         <button type="button" id="admin-bubble-price" onclick="switchAdminSection('price')" class="flex-1 min-w-[160px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all bg-gray-900 text-gray-400 hover:text-white hover:bg-gray-800 border border-gray-800">
                             <i class="fa-solid fa-tags text-xs"></i>
                             <span>Pengaturan Harga Produk</span>
+                        </button>
+                        <button type="button" id="admin-bubble-wa" onclick="switchAdminSection('wa')" class="flex-1 min-w-[160px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all bg-emerald-600 text-white shadow-md shadow-emerald-600/25">
+                            <i class="fa-brands fa-whatsapp text-sm"></i>
+                            <span>WhatsApp &amp; Media Sosial</span>
+                        </button>
+                        <button type="button" id="admin-bubble-sales" onclick="switchAdminSection('sales')" class="flex-1 min-w-[160px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all bg-gray-900 text-gray-400 hover:text-white hover:bg-gray-800 border border-gray-800">
+                            <i class="fa-solid fa-receipt text-sm"></i>
+                            <span>Data Penjualan</span>
                         </button>
                     </div>
 
@@ -623,13 +708,68 @@
                             </button>
                         </div>
                         <p class="text-[10px] text-gray-400">Kedua nomor ini akan otomatis menggantikan tujuan tombol hubungi admin, klaim garansi, dan pilihan tujuan order WhatsApp.</p>
+                        <div class="space-y-3 border-t border-gray-800 pt-4">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-white">Kelola Instagram, TikTok &amp; YouTube</h4>
+                            <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                                <div>
+                                    <label for="admin-social-instagram" class="mb-1 block text-[11px] font-semibold text-gray-300"><i class="fa-brands fa-instagram text-pink-400"></i> Instagram</label>
+                                    <input type="url" id="admin-social-instagram" placeholder="https://instagram.com/akun" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-pink-500">
+                                </div>
+                                <div>
+                                    <label for="admin-social-tiktok" class="mb-1 block text-[11px] font-semibold text-gray-300"><i class="fa-brands fa-tiktok"></i> TikTok</label>
+                                    <input type="url" id="admin-social-tiktok" placeholder="https://tiktok.com/@akun" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-gray-500">
+                                </div>
+                                <div>
+                                    <label for="admin-social-youtube" class="mb-1 block text-[11px] font-semibold text-gray-300"><i class="fa-brands fa-youtube text-red-400"></i> YouTube</label>
+                                    <input type="url" id="admin-social-youtube" placeholder="https://youtube.com/@akun" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500">
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                <p id="social-status-msg" role="status" aria-live="polite" class="hidden text-[11px]"></p>
+                                <button type="button" onclick="saveSocialLinks()" class="ml-auto px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5">
+                                    <i class="fa-solid fa-floppy-disk"></i> Simpan Media Sosial
+                                </button>
+                            </div>
+                            <p class="text-[10px] text-gray-500">Kosongkan tautan jika ikon tidak ingin ditampilkan di beranda.</p>
+                        </div>
+                        <div class="space-y-3 border-t border-gray-800 pt-4">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-white">Kelola Testimoni Customer</h4>
+                            <p class="text-[10px] text-gray-400">Tambahkan ulasan asli dengan izin pelanggan. Testimoni tampil di atas bagian FAQ.</p>
+                            <form id="testimonial-form" onsubmit="return addCustomerTestimonial(event)" class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                <div>
+                                    <label for="testimonial-name" class="mb-1 block text-[11px] font-semibold text-gray-300">Nama / Inisial Customer</label>
+                                    <input id="testimonial-name" name="name" type="text" required maxlength="60" placeholder="Contoh: A***" class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-xs text-white focus:border-red-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label for="testimonial-rating" class="mb-1 block text-[11px] font-semibold text-gray-300">Penilaian</label>
+                                    <select id="testimonial-rating" name="rating" class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-xs text-white focus:border-red-500 focus:outline-none">
+                                        <option value="5">5 bintang</option>
+                                        <option value="4">4 bintang</option>
+                                        <option value="3">3 bintang</option>
+                                        <option value="2">2 bintang</option>
+                                        <option value="1">1 bintang</option>
+                                    </select>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label for="testimonial-message" class="mb-1 block text-[11px] font-semibold text-gray-300">Isi Testimoni</label>
+                                    <textarea id="testimonial-message" name="message" required maxlength="400" rows="3" placeholder="Tulis ulasan pelanggan..." class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-xs text-white focus:border-red-500 focus:outline-none"></textarea>
+                                </div>
+                                <div class="sm:col-span-2 flex flex-wrap items-center justify-between gap-2">
+                                    <p id="testimonial-status-msg" role="status" aria-live="polite" class="hidden text-[11px]"></p>
+                                    <button type="submit" class="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-red-600 px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-red-500">
+                                        <i class="fa-solid fa-plus"></i> Tambah Testimoni
+                                    </button>
+                                </div>
+                            </form>
+                            <div id="admin-testimonial-list" class="space-y-2"></div>
+                        </div>
                     </div>
 
                     <!-- Bubble 2: Product Price Management -->
                     <div id="admin-section-price" class="hidden rounded-2xl bg-gray-900/75 border border-red-500/25 p-4 sm:p-5 space-y-3 shadow-lg">
                         <div class="flex flex-wrap items-center justify-between gap-2">
                             <h4 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
-                                <i class="fa-solid fa-tags text-red-500"></i> Pengaturan Harga Produk (Sesuai Kategori)
+                                <i class="fa-solid fa-tags text-red-500"></i> Pengaturan Harga Produk
                             </h4>
                             <div class="flex flex-wrap items-center gap-2 sm:gap-3">
                                 <button type="button" onclick="toggleAllAdminCategories(true)" class="text-[11px] text-gray-400 hover:text-white transition-colors">
@@ -653,10 +793,120 @@
                         </div>
                     </div>
 
+                    <div id="admin-section-sales" class="hidden rounded-2xl bg-gray-900/75 border border-sky-500/25 p-4 sm:p-5 space-y-4 shadow-lg">
+                        <h4 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-receipt text-sky-400"></i> Input Data Penjualan
+                        </h4>
+                        <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                            <div class="rounded-xl border border-sky-500/20 bg-gray-950/80 p-3 text-center">
+                                <p class="text-[10px] font-semibold uppercase tracking-wide text-gray-400">Total Transaksi</p>
+                                <p id="sales-dashboard-transactions" class="mt-1 text-lg font-black text-sky-300">0</p>
+                            </div>
+                            <div class="rounded-xl border border-emerald-500/20 bg-gray-950/80 p-3 text-center">
+                                <p class="text-[10px] font-semibold uppercase tracking-wide text-gray-400">Total Qty Terjual</p>
+                                <p id="sales-dashboard-quantity" class="mt-1 text-lg font-black text-emerald-300">0</p>
+                            </div>
+                            <div class="rounded-xl border border-amber-500/20 bg-gray-950/80 p-3 text-center">
+                                <p class="text-[10px] font-semibold uppercase tracking-wide text-gray-400">Transaksi Lunas</p>
+                                <p id="sales-dashboard-paid" class="mt-1 text-lg font-black text-amber-300">0</p>
+                            </div>
+                            <div class="rounded-xl border border-red-500/20 bg-gray-950/80 p-3 text-center">
+                                <p class="text-[10px] font-semibold uppercase tracking-wide text-gray-400">Total Penjualan</p>
+                                <p id="sales-dashboard-revenue" class="mt-1 text-base font-black text-red-300">Rp 0</p>
+                            </div>
+                        </div>
+                        <p class="-mt-2 text-[10px] text-gray-500">Qty terjual dan total penjualan dihitung dari transaksi berstatus Lunas.</p>
+                        <form id="sales-entry-form" onsubmit="return addSaleRecord(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            <div>
+                                <label for="sale-date" class="mb-1 block text-[11px] font-semibold text-gray-300">Tanggal</label>
+                                <input id="sale-date" name="date" type="date" required onclick="if (this.showPicker) this.showPicker()" class="w-full cursor-pointer rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-xs text-white focus:border-sky-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label for="sale-buyer" class="mb-1 block text-[11px] font-semibold text-gray-300">Nama Pembeli</label>
+                                <input id="sale-buyer" name="buyer" type="text" required maxlength="100" placeholder="Nama pembeli" class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-xs text-white focus:border-sky-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label for="sale-product" class="mb-1 block text-[11px] font-semibold text-gray-300">Nama Produk</label>
+                                <select id="sale-product" name="product" required onchange="updateSalePriceFromSettings()" class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-xs text-white focus:border-sky-500 focus:outline-none">
+                                    <option value="">Pilih produk</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="sale-duration" class="mb-1 block text-[11px] font-semibold text-gray-300">Paket / Durasi</label>
+                                <select id="sale-duration" name="duration" required onchange="updateSalePriceFromSettings()" class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-xs text-white focus:border-sky-500 focus:outline-none">
+                                    <option value="7 Hari">7 Hari</option>
+                                    <option value="1 Bulan" selected>1 Bulan</option>
+                                    <option value="3 Bulan">3 Bulan</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="sale-quantity" class="mb-1 block text-[11px] font-semibold text-gray-300">Qty</label>
+                                <input id="sale-quantity" name="quantity" type="number" min="1" step="1" value="1" required oninput="updateSalePriceFromSettings()" class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-xs text-white focus:border-sky-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label for="sale-price" class="mb-1 block text-[11px] font-semibold text-gray-300">Harga Jual (Rp)</label>
+                                <input id="sale-price" name="price" type="number" min="0" step="1" required readonly placeholder="Otomatis dari harga produk" class="w-full cursor-not-allowed rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-xs text-gray-300 focus:border-sky-500 focus:outline-none">
+                                <p class="mt-1 text-[10px] text-gray-500">Total otomatis dihitung dari harga produk × Qty.</p>
+                            </div>
+                            <div>
+                                <label for="sale-payment" class="mb-1 block text-[11px] font-semibold text-gray-300">Metode Pembayaran</label>
+                                <select id="sale-payment" name="payment" required class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-xs text-white focus:border-sky-500 focus:outline-none">
+                                    <option value="QRIS">QRIS</option>
+                                    <option value="Transfer Bank">Transfer Bank</option>
+                                    <option value="Dana">Dana</option>
+                                    <option value="GoPay">GoPay</option>
+                                    <option value="OVO">OVO</option>
+                                    <option value="SeaBank">SeaBank</option>
+                                    <option value="ShopeePay">ShopeePay</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="sale-status" class="mb-1 block text-[11px] font-semibold text-gray-300">Status</label>
+                                <select id="sale-status" name="status" required class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-xs text-white focus:border-sky-500 focus:outline-none">
+                                    <option value="Lunas">Lunas</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Batal">Batal</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="sale-note" class="mb-1 block text-[11px] font-semibold text-gray-300">Catatan</label>
+                                <input id="sale-note" name="note" type="text" maxlength="250" placeholder="Catatan tambahan (opsional)" class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-xs text-white focus:border-sky-500 focus:outline-none">
+                            </div>
+                            <div class="sm:col-span-2 lg:col-span-3 flex flex-wrap items-center justify-between gap-2">
+                                <p id="sales-status-msg" role="status" aria-live="polite" class="hidden text-[11px]"></p>
+                                <button type="submit" class="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-sky-600 px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-sky-500">
+                                    <i class="fa-solid fa-plus"></i> Simpan Penjualan
+                                </button>
+                            </div>
+                        </form>
+
+                        <div class="overflow-x-auto rounded-xl border border-gray-800">
+                            <table class="min-w-[1020px] w-full text-left text-[11px]">
+                                <thead class="bg-gray-950 text-gray-300">
+                                    <tr>
+                                        <th class="px-3 py-2.5">Tanggal</th>
+                                        <th class="px-3 py-2.5">Nama Pembeli</th>
+                                        <th class="px-3 py-2.5">Nama Produk</th>
+                                        <th class="px-3 py-2.5">Paket / Durasi</th>
+                                        <th class="px-3 py-2.5">Qty</th>
+                                        <th class="px-3 py-2.5">Harga Jual (Rp)</th>
+                                        <th class="px-3 py-2.5">Metode Pembayaran</th>
+                                        <th class="px-3 py-2.5">Status</th>
+                                        <th class="px-3 py-2.5">Catatan</th>
+                                        <th class="px-3 py-2.5">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sales-record-list" class="divide-y divide-gray-800 bg-gray-900/70 text-gray-200">
+                                    <tr><td colspan="10" class="px-3 py-5 text-center text-gray-500">Belum ada data penjualan.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
                     <!-- Footer Action Buttons -->
                     <div class="pt-3 border-t border-gray-800 flex justify-between items-center">
                         <span id="save-status-msg" class="text-xs text-emerald-400 font-bold opacity-0 transition-opacity">Tersimpan!</span>
-                        <span class="text-[11px] text-gray-400">Pilih bubble <strong>Nomor WhatsApp Admin</strong> atau <strong>Pengaturan Harga Produk</strong> sesuai kebutuhan.</span>
+                        <span class="text-[11px] text-gray-400">Pilih menu <strong>WhatsApp &amp; Media Sosial</strong>, <strong>Pengaturan Harga Produk</strong>, atau <strong>Data Penjualan</strong>.</span>
                     </div>
                 </div>
 
@@ -18619,6 +18869,54 @@
 
             loadEmbeddedImages();
 
+            let activeHeroSlideIndex = 0;
+
+            function showHeroSlide(index) {
+                const slides = Array.from(document.querySelectorAll('#hero-banner .hero-slide'));
+                if (slides.length === 0) return;
+
+                activeHeroSlideIndex = ((index % slides.length) + slides.length) % slides.length;
+                slides.forEach((slide, slideIndex) => {
+                    slide.setAttribute('aria-hidden', String(slideIndex !== activeHeroSlideIndex));
+                });
+
+                document.querySelectorAll('[data-hero-dot]').forEach(dot => {
+                    const isActive = Number(dot.getAttribute('data-hero-dot')) === activeHeroSlideIndex;
+                    dot.setAttribute('aria-current', String(isActive));
+                    dot.className = `h-2.5 w-2.5 rounded-full transition-all ${isActive ? 'bg-white scale-110' : 'bg-white/40 hover:bg-white/70'}`;
+                });
+            }
+
+            function changeHeroSlide(direction) {
+                showHeroSlide(activeHeroSlideIndex + direction);
+            }
+
+            function initializeHeroCarousel() {
+                const carousel = document.getElementById('hero-banner');
+                if (!carousel) return;
+
+                showHeroSlide(activeHeroSlideIndex);
+                let touchStartX = null;
+                carousel.addEventListener('touchstart', event => {
+                    touchStartX = event.changedTouches.length ? event.changedTouches[0].clientX : null;
+                }, { passive: true });
+                carousel.addEventListener('touchend', event => {
+                    if (touchStartX === null || event.changedTouches.length === 0) return;
+                    const swipeDistance = event.changedTouches[0].clientX - touchStartX;
+                    if (Math.abs(swipeDistance) > 45) changeHeroSlide(swipeDistance < 0 ? 1 : -1);
+                    touchStartX = null;
+                }, { passive: true });
+
+                const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                if (!prefersReducedMotion) {
+                    window.setInterval(() => {
+                        if (!document.hidden && !carousel.matches(':hover') && !carousel.contains(document.activeElement)) {
+                            changeHeroSlide(1);
+                        }
+                    }, 6500);
+                }
+            }
+
             // Admin PIN (Default: 1234)
             const DEFAULT_ADMIN_PIN = "1234";
             const productsWithoutPrivatePrices = new Set(['spotify', 'hbo', 'iqiyi']);
@@ -18741,6 +19039,44 @@
             let adminActiveCategory = 'all';
             let adminCollapsedCategories = {}; // tracks minimized state per category bubble
             let cardSelectedDuration = {}; // tracks selected duration per product card
+            let salesRecords = [];
+            const SALES_RECORDS_STORAGE_KEY = 'r_vision_sales_records';
+            let socialLinks = { instagram: '', tiktok: '', youtube: '' };
+            const SOCIAL_LINKS_STORAGE_KEY = 'r_vision_social_links';
+            let customerTestimonials = [];
+            const TESTIMONIALS_STORAGE_KEY = 'r_vision_testimonials';
+            const DEFAULT_CUSTOMER_TESTIMONIALS = [
+                {
+                    id: 'customer-nadia',
+                    name: 'Nadia',
+                    rating: 5,
+                    message: 'Penikmat Drakor & Film: "Selalu jadi andalan tiap ada drama atau film baru. Prosesnya gampang dan nggak pakai lama'
+                },
+                {
+                    id: 'customer-raka',
+                    name: 'Raka',
+                    rating: 5,
+                    message: 'Raka – Pengguna Paket Streaming & Musik: "Akun aktif cepat, kualitas aman, dan harganya ramah di kantong. Puas banget sewa di R VISION'
+                },
+                {
+                    id: 'customer-nybok',
+                    name: 'Nybok',
+                    rating: 5,
+                    message: 'Buat yang suka nonton film ramean atau dengerin playlist seharian, R VISION worth it banget.'
+                },
+                {
+                    id: 'customer-ira',
+                    name: 'IRA',
+                    rating: 5,
+                    message: 'Awalnya coba-coba sewa bulanan, eh keterusan karena respon adminnya cepet dan akunnya aman dipakai'
+                },
+                {
+                    id: 'customer-alfin-r',
+                    name: 'Alfin R',
+                    rating: 5,
+                    message: 'Jujur ngebantu banget sih R VISION ini. Tiap malem bisa maraton drakor sama dengerin musik tanpa gangguan, harganya juga masuk akal banget'
+                }
+            ];
 
             // Load Settings from LocalStorage
             function loadStoredData() {
@@ -18784,6 +19120,9 @@
                 renderAdmin1ToggleUI();
                 renderAdmin2ToggleUI();
                 applyAdminVisibility();
+                loadSocialLinks();
+                loadCustomerTestimonials();
+                loadSalesRecords();
             }
 
             function updateWaLinks() {
@@ -18813,6 +19152,265 @@
                 });
 
                 renderGaransiWaOptions();
+            }
+
+            function loadSocialLinks() {
+                try {
+                    const savedLinks = localStorage.getItem(SOCIAL_LINKS_STORAGE_KEY);
+                    const parsedLinks = savedLinks ? JSON.parse(savedLinks) : {};
+                    socialLinks = {};
+                    ['instagram', 'tiktok', 'youtube'].forEach(platform => {
+                        const rawLink = typeof parsedLinks[platform] === 'string' ? parsedLinks[platform] : '';
+                        const validatedLink = getValidatedSocialUrl(rawLink, platform);
+                        socialLinks[platform] = validatedLink || '';
+                    });
+                } catch (error) {
+                    console.error('Tautan media sosial gagal dimuat.', error);
+                    socialLinks = { instagram: '', tiktok: '', youtube: '' };
+                }
+
+                ['instagram', 'tiktok', 'youtube'].forEach(platform => {
+                    const input = document.getElementById(`admin-social-${platform}`);
+                    if (input) input.value = socialLinks[platform];
+                });
+                renderSocialLinks();
+            }
+
+            function renderSocialLinks() {
+                const container = document.getElementById('social-link-list');
+                if (!container) return;
+
+                const platforms = [
+                    { id: 'instagram', icon: 'fa-instagram', label: 'Instagram', className: 'hover:text-pink-400' },
+                    { id: 'tiktok', icon: 'fa-tiktok', label: 'TikTok', className: 'hover:text-white' },
+                    { id: 'youtube', icon: 'fa-youtube', label: 'YouTube', className: 'hover:text-red-500' }
+                ];
+                container.replaceChildren();
+
+                platforms.forEach(platform => {
+                    const link = socialLinks[platform.id];
+                    const icon = document.createElement('i');
+                    icon.className = `fa-brands ${platform.icon} text-xl`;
+
+                    if (link) {
+                        const anchor = document.createElement('a');
+                        anchor.href = link;
+                        anchor.target = '_blank';
+                        anchor.rel = 'noopener noreferrer';
+                        anchor.setAttribute('aria-label', `Ikuti R Vision di ${platform.label}`);
+                        anchor.className = `text-gray-300 transition-colors ${platform.className}`;
+                        anchor.appendChild(icon);
+                        container.appendChild(anchor);
+                    } else {
+                        const placeholder = document.createElement('span');
+                        placeholder.className = 'text-gray-600';
+                        placeholder.setAttribute('aria-label', `${platform.label} belum diatur`);
+                        placeholder.appendChild(icon);
+                        container.appendChild(placeholder);
+                    }
+                });
+            }
+
+            function setSocialStatus(message, isError) {
+                const status = document.getElementById('social-status-msg');
+                if (!status) return;
+
+                status.textContent = message;
+                status.className = `text-[11px] ${isError ? 'text-red-400' : 'text-emerald-400'}`;
+                status.classList.toggle('hidden', !message);
+            }
+
+            function getValidatedSocialUrl(value, platform) {
+                const trimmed = value.trim();
+                if (!trimmed) return '';
+
+                let url;
+                try {
+                    url = new URL(/^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`);
+                } catch (error) {
+                    return null;
+                }
+
+                if (url.protocol !== 'https:') return null;
+                const hostname = url.hostname.toLowerCase();
+                const allowedHosts = {
+                    instagram: ['instagram.com', 'www.instagram.com'],
+                    tiktok: ['tiktok.com', 'www.tiktok.com', 'm.tiktok.com'],
+                    youtube: ['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtu.be']
+                };
+                return allowedHosts[platform].includes(hostname) ? url.href : null;
+            }
+
+            function saveSocialLinks() {
+                const nextLinks = {};
+                for (const platform of ['instagram', 'tiktok', 'youtube']) {
+                    const input = document.getElementById(`admin-social-${platform}`);
+                    const validatedUrl = getValidatedSocialUrl(input ? input.value : '', platform);
+                    if (validatedUrl === null) {
+                        setSocialStatus(`Masukkan tautan HTTPS ${platform} yang valid.`, true);
+                        if (input) input.focus();
+                        return;
+                    }
+                    nextLinks[platform] = validatedUrl;
+                }
+
+                try {
+                    localStorage.setItem(SOCIAL_LINKS_STORAGE_KEY, JSON.stringify(nextLinks));
+                } catch (error) {
+                    console.error('Tautan media sosial gagal disimpan.', error);
+                    setSocialStatus('Tautan gagal disimpan. Periksa ruang penyimpanan browser.', true);
+                    return;
+                }
+
+                socialLinks = nextLinks;
+                renderSocialLinks();
+                setSocialStatus('Tautan media sosial berhasil disimpan.', false);
+            }
+
+            function loadCustomerTestimonials() {
+                try {
+                    const savedTestimonials = localStorage.getItem(TESTIMONIALS_STORAGE_KEY);
+                    const hasSavedTestimonials = savedTestimonials !== null;
+                    const parsedTestimonials = hasSavedTestimonials
+                        ? JSON.parse(savedTestimonials)
+                        : JSON.parse(JSON.stringify(DEFAULT_CUSTOMER_TESTIMONIALS));
+                    if (!Array.isArray(parsedTestimonials)) {
+                        throw new Error('Data testimoni harus berupa daftar.');
+                    }
+                    customerTestimonials = parsedTestimonials.filter(testimonial =>
+                        testimonial &&
+                        typeof testimonial.id === 'string' &&
+                        typeof testimonial.name === 'string' &&
+                        typeof testimonial.message === 'string' &&
+                        Number.isInteger(testimonial.rating) &&
+                        testimonial.rating >= 1 &&
+                        testimonial.rating <= 5
+                    );
+                    if (!hasSavedTestimonials) persistCustomerTestimonials();
+                } catch (error) {
+                    console.error('Testimoni pelanggan gagal dimuat.', error);
+                    customerTestimonials = [];
+                    setTestimonialStatus('Testimoni gagal dimuat dari penyimpanan browser.', true);
+                }
+
+                renderCustomerTestimonials();
+            }
+
+            function setTestimonialStatus(message, isError) {
+                const status = document.getElementById('testimonial-status-msg');
+                if (!status) return;
+
+                status.textContent = message;
+                status.className = `text-[11px] ${isError ? 'text-red-400' : 'text-emerald-400'}`;
+                status.classList.toggle('hidden', !message);
+            }
+
+            function persistCustomerTestimonials() {
+                try {
+                    localStorage.setItem(TESTIMONIALS_STORAGE_KEY, JSON.stringify(customerTestimonials));
+                    return true;
+                } catch (error) {
+                    console.error('Testimoni pelanggan gagal disimpan.', error);
+                    setTestimonialStatus('Testimoni gagal disimpan. Periksa ruang penyimpanan browser.', true);
+                    return false;
+                }
+            }
+
+            function renderCustomerTestimonials() {
+                const publicList = document.getElementById('customer-testimonial-list');
+                const adminList = document.getElementById('admin-testimonial-list');
+                if (publicList) {
+                    publicList.replaceChildren();
+                    if (customerTestimonials.length === 0) {
+                        const emptyMessage = document.createElement('p');
+                        emptyMessage.className = 'md:col-span-2 lg:col-span-3 text-center text-sm text-gray-400 py-6';
+                        emptyMessage.textContent = 'Testimoni pelanggan akan tampil di sini.';
+                        publicList.appendChild(emptyMessage);
+                    } else {
+                        customerTestimonials.forEach(testimonial => {
+                            const card = document.createElement('article');
+                            card.className = 'glass-card rounded-2xl border border-gray-800 p-5 space-y-3';
+                            const stars = document.createElement('div');
+                            stars.className = 'flex gap-1 text-amber-400';
+                            stars.setAttribute('aria-label', `Penilaian ${testimonial.rating} dari 5`);
+                            for (let index = 0; index < 5; index += 1) {
+                                const star = document.createElement('i');
+                                star.className = `fa-solid fa-star ${index < testimonial.rating ? '' : 'text-gray-700'}`;
+                                star.setAttribute('aria-hidden', 'true');
+                                stars.appendChild(star);
+                            }
+                            const message = document.createElement('p');
+                            message.className = 'text-sm leading-relaxed text-gray-300';
+                            message.textContent = testimonial.message;
+                            const customer = document.createElement('p');
+                            customer.className = 'text-xs font-bold text-white';
+                            customer.textContent = testimonial.name;
+                            card.append(stars, message, customer);
+                            publicList.appendChild(card);
+                        });
+                    }
+                }
+
+                if (adminList) {
+                    adminList.replaceChildren();
+                    customerTestimonials.forEach(testimonial => {
+                        const item = document.createElement('div');
+                        item.className = 'flex items-center justify-between gap-3 rounded-lg border border-gray-800 bg-gray-950/70 px-3 py-2';
+                        const summary = document.createElement('p');
+                        summary.className = 'min-w-0 truncate text-[11px] text-gray-300';
+                        summary.textContent = `${testimonial.name} · ${testimonial.rating}/5 · ${testimonial.message}`;
+                        const removeButton = document.createElement('button');
+                        removeButton.type = 'button';
+                        removeButton.className = 'shrink-0 rounded-lg border border-red-500/30 px-2.5 py-1 text-[10px] font-bold text-red-300 hover:bg-red-500/10';
+                        removeButton.textContent = 'Hapus';
+                        removeButton.setAttribute('aria-label', `Hapus testimoni ${testimonial.name}`);
+                        removeButton.addEventListener('click', () => deleteCustomerTestimonial(testimonial.id));
+                        item.append(summary, removeButton);
+                        adminList.appendChild(item);
+                    });
+                }
+            }
+
+            function addCustomerTestimonial(event) {
+                event.preventDefault();
+                const form = document.getElementById('testimonial-form');
+                if (!form || !form.reportValidity()) return false;
+
+                const record = {
+                    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+                    name: document.getElementById('testimonial-name').value.trim(),
+                    rating: Number(document.getElementById('testimonial-rating').value),
+                    message: document.getElementById('testimonial-message').value.trim()
+                };
+                if (!record.name || !record.message || !Number.isInteger(record.rating) || record.rating < 1 || record.rating > 5) {
+                    setTestimonialStatus('Lengkapi nama, isi testimoni, dan penilaian.', true);
+                    return false;
+                }
+
+                customerTestimonials.unshift(record);
+                if (!persistCustomerTestimonials()) {
+                    customerTestimonials.shift();
+                    return false;
+                }
+
+                renderCustomerTestimonials();
+                form.reset();
+                setTestimonialStatus('Testimoni berhasil ditambahkan.', false);
+                return false;
+            }
+
+            function deleteCustomerTestimonial(id) {
+                const index = customerTestimonials.findIndex(testimonial => testimonial.id === id);
+                if (index < 0 || !window.confirm('Hapus testimoni ini?')) return;
+
+                const [removed] = customerTestimonials.splice(index, 1);
+                if (!persistCustomerTestimonials()) {
+                    customerTestimonials.splice(index, 0, removed);
+                    renderCustomerTestimonials();
+                    return;
+                }
+                renderCustomerTestimonials();
+                setTestimonialStatus('Testimoni berhasil dihapus.', false);
             }
 
             function renderGaransiWaOptions() {
@@ -19268,11 +19866,13 @@
             }
 
             function switchAdminSection(section) {
-                const targetSection = section === 'price' ? 'price' : 'wa';
+                const targetSection = ['price', 'sales'].includes(section) ? section : 'wa';
                 const waBubble = document.getElementById('admin-bubble-wa');
                 const priceBubble = document.getElementById('admin-bubble-price');
+                const salesBubble = document.getElementById('admin-bubble-sales');
                 const waSection = document.getElementById('admin-section-wa');
                 const priceSection = document.getElementById('admin-section-price');
+                const salesSection = document.getElementById('admin-section-sales');
 
                 if (waBubble) {
                     waBubble.className = targetSection === 'wa'
@@ -19286,12 +19886,284 @@
                         : 'flex-1 min-w-[160px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all bg-gray-900 text-gray-400 hover:text-white hover:bg-gray-800 border border-gray-800';
                 }
 
+                if (salesBubble) {
+                    salesBubble.className = targetSection === 'sales'
+                        ? 'flex-1 min-w-[160px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all bg-sky-600 text-white shadow-md shadow-sky-600/25'
+                        : 'flex-1 min-w-[160px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all bg-gray-900 text-gray-400 hover:text-white hover:bg-gray-800 border border-gray-800';
+                }
+
                 if (waSection) {
                     waSection.classList.toggle('hidden', targetSection !== 'wa');
                 }
                 if (priceSection) {
                     priceSection.classList.toggle('hidden', targetSection !== 'price');
                 }
+                if (salesSection) {
+                    salesSection.classList.toggle('hidden', targetSection !== 'sales');
+                }
+                if (targetSection === 'sales') {
+                    updateSalePriceFromSettings();
+                }
+            }
+
+            function getLocalDateInputValue() {
+                const now = new Date();
+                return new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+            }
+
+            function setSalesStatus(message, isError) {
+                const status = document.getElementById('sales-status-msg');
+                if (!status) return;
+
+                status.textContent = message;
+                status.className = `text-[11px] ${isError ? 'text-red-400' : 'text-emerald-400'}`;
+                status.classList.toggle('hidden', !message);
+            }
+
+            function renderSalesProductOptions() {
+                const productSelect = document.getElementById('sale-product');
+                if (!productSelect) return;
+
+                const selectedValue = productSelect.value;
+                productSelect.replaceChildren();
+
+                const placeholder = document.createElement('option');
+                placeholder.value = '';
+                placeholder.textContent = 'Pilih produk';
+                productSelect.appendChild(placeholder);
+
+                products.forEach(product => {
+                    const accountTypes = supportsPrivateAccount(product) ? ['sharing', 'private'] : ['sharing'];
+                    accountTypes.forEach(accountType => {
+                        const option = document.createElement('option');
+                        option.value = `${product.id}::${accountType}`;
+                        option.textContent = `${product.name} - ${accountType === 'private' ? 'Private' : 'Sharing'}`;
+                        productSelect.appendChild(option);
+                    });
+                });
+
+                if (Array.from(productSelect.options).some(option => option.value === selectedValue)) {
+                    productSelect.value = selectedValue;
+                }
+            }
+
+            function updateSalePriceFromSettings() {
+                const priceInput = document.getElementById('sale-price');
+                const productSelect = document.getElementById('sale-product');
+                const durationSelect = document.getElementById('sale-duration');
+                const quantityInput = document.getElementById('sale-quantity');
+                if (!priceInput || !productSelect || !durationSelect || !quantityInput) return;
+
+                const duration = durationSelect.value;
+                const durationKey = duration === '7 Hari' ? '7d' : (duration === '3 Bulan' ? '3m' : '1m');
+                const quantity = Number(quantityInput.value);
+                const [productId, accountType] = productSelect.value.split('::');
+                const product = products.find(item => item.id === productId);
+                if (!product || !['sharing', 'private'].includes(accountType) || (accountType === 'private' && !supportsPrivateAccount(product))) {
+                    priceInput.value = '';
+                    return;
+                }
+                if (!Number.isSafeInteger(quantity) || quantity < 1) {
+                    priceInput.value = '';
+                    return;
+                }
+
+                const configuredPrices = accountType === 'private' ? product.privatePrices : product.sharingPrices;
+                const unitPrice = configuredPrices && typeof configuredPrices[durationKey] === 'number'
+                    ? configuredPrices[durationKey]
+                    : (accountType === 'private' ? product.privatePrice : product.sharingPrice);
+
+                const totalPrice = unitPrice * quantity;
+                priceInput.value = Number.isSafeInteger(totalPrice) && totalPrice >= 0 ? String(totalPrice) : '';
+            }
+
+            function getSaleRecordTotal(record) {
+                const savedPrice = Number(record.price) || 0;
+                if (typeof record.unitPrice === 'number') return savedPrice;
+                return savedPrice * (Number(record.quantity) || 0);
+            }
+
+            function updateSalesDashboard() {
+                const paidRecords = salesRecords.filter(record => record.status === 'Lunas');
+                const totalQuantity = paidRecords.reduce((sum, record) => sum + (Number(record.quantity) || 0), 0);
+                const totalSales = paidRecords.reduce((sum, record) => {
+                    return sum + getSaleRecordTotal(record);
+                }, 0);
+                const transactionCount = document.getElementById('sales-dashboard-transactions');
+                const quantityCount = document.getElementById('sales-dashboard-quantity');
+                const paidCount = document.getElementById('sales-dashboard-paid');
+                const revenue = document.getElementById('sales-dashboard-revenue');
+
+                if (transactionCount) transactionCount.textContent = String(salesRecords.length);
+                if (quantityCount) quantityCount.textContent = totalQuantity.toLocaleString('id-ID');
+                if (paidCount) paidCount.textContent = String(paidRecords.length);
+                if (revenue) revenue.textContent = `Rp ${totalSales.toLocaleString('id-ID')}`;
+            }
+
+            function renderSalesRecords() {
+                const recordList = document.getElementById('sales-record-list');
+                if (!recordList) return;
+
+                updateSalesDashboard();
+                recordList.replaceChildren();
+                if (salesRecords.length === 0) {
+                    const emptyRow = document.createElement('tr');
+                    const emptyCell = document.createElement('td');
+                    emptyCell.colSpan = 10;
+                    emptyCell.className = 'px-3 py-5 text-center text-gray-500';
+                    emptyCell.textContent = 'Belum ada data penjualan.';
+                    emptyRow.appendChild(emptyCell);
+                    recordList.appendChild(emptyRow);
+                    return;
+                }
+
+                const statusClasses = {
+                    Lunas: 'bg-emerald-500/15 text-emerald-300',
+                    Pending: 'bg-amber-500/15 text-amber-300',
+                    Batal: 'bg-red-500/15 text-red-300'
+                };
+
+                salesRecords.forEach((record, recordIndex) => {
+                    const row = document.createElement('tr');
+                    const values = [
+                        record.date,
+                        record.buyer,
+                        record.product,
+                        record.duration,
+                        String(record.quantity),
+                        getSaleRecordTotal(record).toLocaleString('id-ID'),
+                        record.payment,
+                        record.status,
+                        record.note || '-'
+                    ];
+
+                    values.forEach((value, index) => {
+                        const cell = document.createElement('td');
+                        cell.className = 'px-3 py-2.5 whitespace-nowrap';
+                        if (index === 7) {
+                            const badge = document.createElement('span');
+                            badge.className = `rounded-full px-2 py-1 text-[10px] font-semibold ${statusClasses[record.status] || 'bg-gray-700 text-gray-200'}`;
+                            badge.textContent = value;
+                            cell.appendChild(badge);
+                        } else {
+                            cell.textContent = value;
+                        }
+                        row.appendChild(cell);
+                    });
+
+                    const actionCell = document.createElement('td');
+                    actionCell.className = 'px-3 py-2.5 whitespace-nowrap';
+                    const deleteButton = document.createElement('button');
+                    deleteButton.type = 'button';
+                    deleteButton.className = 'rounded-lg border border-red-500/30 px-2.5 py-1 text-[10px] font-bold text-red-300 transition-colors hover:bg-red-500/10';
+                    deleteButton.textContent = 'Hapus';
+                    deleteButton.setAttribute('aria-label', `Hapus catatan penjualan ${record.buyer}`);
+                    deleteButton.addEventListener('click', () => deleteSaleRecord(recordIndex));
+                    actionCell.appendChild(deleteButton);
+                    row.appendChild(actionCell);
+                    recordList.appendChild(row);
+                });
+            }
+
+            function deleteSaleRecord(recordIndex) {
+                if (!Number.isInteger(recordIndex) || recordIndex < 0 || recordIndex >= salesRecords.length) return;
+                if (!window.confirm('Hapus catatan penjualan ini? Tindakan ini tidak dapat dibatalkan.')) return;
+
+                const [removedRecord] = salesRecords.splice(recordIndex, 1);
+                if (!persistSalesRecords()) {
+                    salesRecords.splice(recordIndex, 0, removedRecord);
+                    renderSalesRecords();
+                    return;
+                }
+
+                renderSalesRecords();
+                setSalesStatus('Catatan penjualan berhasil dihapus.', false);
+            }
+
+            function loadSalesRecords() {
+                try {
+                    const savedRecords = localStorage.getItem(SALES_RECORDS_STORAGE_KEY);
+                    const parsedRecords = savedRecords ? JSON.parse(savedRecords) : [];
+                    if (!Array.isArray(parsedRecords)) {
+                        throw new Error('Data penjualan harus berupa daftar.');
+                    }
+                    salesRecords = parsedRecords;
+                } catch (error) {
+                    console.error('Data penjualan gagal dimuat.', error);
+                    salesRecords = [];
+                    setSalesStatus('Data penjualan gagal dimuat dari penyimpanan browser.', true);
+                }
+
+                renderSalesProductOptions();
+                renderSalesRecords();
+
+                const dateInput = document.getElementById('sale-date');
+                if (dateInput && !dateInput.value) {
+                    dateInput.value = getLocalDateInputValue();
+                }
+            }
+
+            function persistSalesRecords() {
+                try {
+                    localStorage.setItem(SALES_RECORDS_STORAGE_KEY, JSON.stringify(salesRecords));
+                    return true;
+                } catch (error) {
+                    console.error('Data penjualan gagal disimpan.', error);
+                    setSalesStatus('Data gagal disimpan. Periksa ruang penyimpanan browser.', true);
+                    return false;
+                }
+            }
+
+            function addSaleRecord(event) {
+                event.preventDefault();
+
+                const form = document.getElementById('sales-entry-form');
+                if (!form || !form.reportValidity()) return false;
+
+                const quantity = Number(document.getElementById('sale-quantity').value);
+                const price = Number(document.getElementById('sale-price').value);
+                const [productId, accountType] = document.getElementById('sale-product').value.split('::');
+                const saleProduct = products.find(product => product.id === productId);
+                if (!Number.isSafeInteger(quantity) || quantity < 1 || !Number.isSafeInteger(price) || price < 0) {
+                    setSalesStatus('Qty harus minimal 1 dan harga jual tidak boleh kurang dari 0.', true);
+                    return false;
+                }
+                if (!saleProduct || !['sharing', 'private'].includes(accountType) || (accountType === 'private' && !supportsPrivateAccount(saleProduct))) {
+                    setSalesStatus('Pilih nama produk yang tersedia.', true);
+                    return false;
+                }
+
+                const record = {
+                    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+                    date: document.getElementById('sale-date').value,
+                    buyer: document.getElementById('sale-buyer').value.trim(),
+                    product: `${saleProduct.name} - ${accountType === 'private' ? 'Private' : 'Sharing'}`,
+                    duration: document.getElementById('sale-duration').value,
+                    quantity,
+                    price,
+                    unitPrice: price / quantity,
+                    payment: document.getElementById('sale-payment').value,
+                    status: document.getElementById('sale-status').value,
+                    note: document.getElementById('sale-note').value.trim()
+                };
+
+                if (!record.buyer) {
+                    setSalesStatus('Nama pembeli wajib diisi.', true);
+                    return false;
+                }
+
+                salesRecords.unshift(record);
+                if (!persistSalesRecords()) {
+                    salesRecords.shift();
+                    return false;
+                }
+
+                renderSalesRecords();
+                form.reset();
+                document.getElementById('sale-date').value = getLocalDateInputValue();
+                document.getElementById('sale-quantity').value = '1';
+                setSalesStatus('Data penjualan berhasil disimpan.', false);
+                return false;
             }
 
             function selectWaAdmin(adminIndex) {
@@ -19638,6 +20510,7 @@
             window.onload = function() {
                 loadStoredData();
                 renderProducts(products);
+                initializeHeroCarousel();
             };
         </script>
     </body>
