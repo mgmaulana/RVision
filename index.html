@@ -2613,7 +2613,6 @@
                         frame.remove();
                     };
                     const onMessage = event => {
-                        if (event.source !== frame.contentWindow) return;
                         if (event.origin !== 'null' && event.origin !== 'https://script.google.com' && !event.origin.endsWith('.googleusercontent.com')) return;
                         if (!event.data || event.data.requestId !== requestId || !event.data.response) return;
                         cleanup();
