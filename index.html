@@ -56,6 +56,43 @@
                 display: none !important;
             }
 
+            .social-toggle {
+                appearance: none;
+                width: 36px;
+                height: 20px;
+                position: relative;
+                flex: none;
+                border-radius: 9999px;
+                background-color: #4b5563;
+                cursor: pointer;
+                transition: background-color 180ms ease;
+            }
+
+            .social-toggle::before {
+                content: "";
+                position: absolute;
+                top: 3px;
+                left: 3px;
+                width: 14px;
+                height: 14px;
+                border-radius: 9999px;
+                background: #fff;
+                transition: transform 180ms ease;
+            }
+
+            .social-toggle:checked {
+                background-color: #10b981;
+            }
+
+            .social-toggle:checked::before {
+                transform: translateX(16px);
+            }
+
+            .social-toggle:focus-visible {
+                outline: 2px solid #fff;
+                outline-offset: 2px;
+            }
+
             .hero-banner {
                 aspect-ratio: 4 / 5;
                 min-height: 390px;
@@ -716,15 +753,33 @@
                             <h4 class="text-xs font-bold uppercase tracking-wider text-white">Kelola Instagram, TikTok &amp; YouTube</h4>
                             <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
                                 <div>
-                                    <label for="admin-social-instagram" class="mb-1 block text-[11px] font-semibold text-gray-300"><i class="fa-brands fa-instagram text-pink-400"></i> Instagram</label>
+                                    <div class="mb-1 flex items-center justify-between gap-2">
+                                        <label for="admin-social-instagram" class="text-[11px] font-semibold text-gray-300"><i class="fa-brands fa-instagram text-pink-400"></i> Instagram</label>
+                                        <label for="admin-social-instagram-enabled" class="inline-flex cursor-pointer items-center gap-2">
+                                            <span id="admin-social-instagram-state" class="text-[10px] font-bold text-emerald-400">ON</span>
+                                            <input type="checkbox" id="admin-social-instagram-enabled" class="social-toggle" aria-label="Tampilkan Instagram di beranda" checked onchange="updateSocialToggleState('instagram', this.checked)">
+                                        </label>
+                                    </div>
                                     <input type="url" id="admin-social-instagram" placeholder="https://instagram.com/akun" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-pink-500">
                                 </div>
                                 <div>
-                                    <label for="admin-social-tiktok" class="mb-1 block text-[11px] font-semibold text-gray-300"><i class="fa-brands fa-tiktok"></i> TikTok</label>
+                                    <div class="mb-1 flex items-center justify-between gap-2">
+                                        <label for="admin-social-tiktok" class="text-[11px] font-semibold text-gray-300"><i class="fa-brands fa-tiktok"></i> TikTok</label>
+                                        <label for="admin-social-tiktok-enabled" class="inline-flex cursor-pointer items-center gap-2">
+                                            <span id="admin-social-tiktok-state" class="text-[10px] font-bold text-emerald-400">ON</span>
+                                            <input type="checkbox" id="admin-social-tiktok-enabled" class="social-toggle" aria-label="Tampilkan TikTok di beranda" checked onchange="updateSocialToggleState('tiktok', this.checked)">
+                                        </label>
+                                    </div>
                                     <input type="url" id="admin-social-tiktok" placeholder="https://tiktok.com/@akun" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-gray-500">
                                 </div>
                                 <div>
-                                    <label for="admin-social-youtube" class="mb-1 block text-[11px] font-semibold text-gray-300"><i class="fa-brands fa-youtube text-red-400"></i> YouTube</label>
+                                    <div class="mb-1 flex items-center justify-between gap-2">
+                                        <label for="admin-social-youtube" class="text-[11px] font-semibold text-gray-300"><i class="fa-brands fa-youtube text-red-400"></i> YouTube</label>
+                                        <label for="admin-social-youtube-enabled" class="inline-flex cursor-pointer items-center gap-2">
+                                            <span id="admin-social-youtube-state" class="text-[10px] font-bold text-emerald-400">ON</span>
+                                            <input type="checkbox" id="admin-social-youtube-enabled" class="social-toggle" aria-label="Tampilkan YouTube di beranda" checked onchange="updateSocialToggleState('youtube', this.checked)">
+                                        </label>
+                                    </div>
                                     <input type="url" id="admin-social-youtube" placeholder="https://youtube.com/@akun" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500">
                                 </div>
                             </div>
@@ -19046,6 +19101,7 @@
             let salesRecords = [];
             const SALES_RECORDS_STORAGE_KEY = 'r_vision_sales_records';
             let socialLinks = { instagram: '', tiktok: '', youtube: '' };
+            let socialLinksEnabled = { instagram: true, tiktok: true, youtube: true };
             const SOCIAL_LINKS_STORAGE_KEY = 'r_vision_social_links';
             let customerTestimonials = [];
             const TESTIMONIALS_STORAGE_KEY = 'r_vision_testimonials';
@@ -19162,22 +19218,39 @@
                 try {
                     const savedLinks = localStorage.getItem(SOCIAL_LINKS_STORAGE_KEY);
                     const parsedLinks = savedLinks ? JSON.parse(savedLinks) : {};
+                    const savedEnabled = parsedLinks && typeof parsedLinks.enabled === 'object' && parsedLinks.enabled !== null
+                        ? parsedLinks.enabled
+                        : {};
                     socialLinks = {};
+                    socialLinksEnabled = {};
                     ['instagram', 'tiktok', 'youtube'].forEach(platform => {
-                        const rawLink = typeof parsedLinks[platform] === 'string' ? parsedLinks[platform] : '';
+                        const rawLink = parsedLinks && typeof parsedLinks[platform] === 'string' ? parsedLinks[platform] : '';
                         const validatedLink = getValidatedSocialUrl(rawLink, platform);
                         socialLinks[platform] = validatedLink || '';
+                        socialLinksEnabled[platform] = typeof savedEnabled[platform] === 'boolean' ? savedEnabled[platform] : true;
                     });
                 } catch (error) {
                     console.error('Tautan media sosial gagal dimuat.', error);
                     socialLinks = { instagram: '', tiktok: '', youtube: '' };
+                    socialLinksEnabled = { instagram: true, tiktok: true, youtube: true };
                 }
 
                 ['instagram', 'tiktok', 'youtube'].forEach(platform => {
                     const input = document.getElementById(`admin-social-${platform}`);
                     if (input) input.value = socialLinks[platform];
+                    const toggle = document.getElementById(`admin-social-${platform}-enabled`);
+                    if (toggle) toggle.checked = socialLinksEnabled[platform];
+                    updateSocialToggleState(platform, socialLinksEnabled[platform]);
                 });
                 renderSocialLinks();
+            }
+
+            function updateSocialToggleState(platform, isEnabled) {
+                const stateLabel = document.getElementById(`admin-social-${platform}-state`);
+                if (!stateLabel) return;
+
+                stateLabel.textContent = isEnabled ? 'ON' : 'OFF';
+                stateLabel.className = `text-[10px] font-bold ${isEnabled ? 'text-emerald-400' : 'text-gray-500'}`;
             }
 
             function renderSocialLinks() {
@@ -19192,6 +19265,8 @@
                 container.replaceChildren();
 
                 platforms.forEach(platform => {
+                    if (!socialLinksEnabled[platform.id]) return;
+
                     const link = socialLinks[platform.id];
                     const icon = document.createElement('i');
                     icon.className = `fa-brands ${platform.icon} text-xl`;
@@ -19247,6 +19322,7 @@
 
             function saveSocialLinks() {
                 const nextLinks = {};
+                const nextEnabled = {};
                 for (const platform of ['instagram', 'tiktok', 'youtube']) {
                     const input = document.getElementById(`admin-social-${platform}`);
                     const validatedUrl = getValidatedSocialUrl(input ? input.value : '', platform);
@@ -19256,10 +19332,11 @@
                         return;
                     }
                     nextLinks[platform] = validatedUrl;
+                    nextEnabled[platform] = document.getElementById(`admin-social-${platform}-enabled`).checked;
                 }
 
                 try {
-                    localStorage.setItem(SOCIAL_LINKS_STORAGE_KEY, JSON.stringify(nextLinks));
+                    localStorage.setItem(SOCIAL_LINKS_STORAGE_KEY, JSON.stringify({ ...nextLinks, enabled: nextEnabled }));
                 } catch (error) {
                     console.error('Tautan media sosial gagal disimpan.', error);
                     setSocialStatus('Tautan gagal disimpan. Periksa ruang penyimpanan browser.', true);
@@ -19267,8 +19344,9 @@
                 }
 
                 socialLinks = nextLinks;
+                socialLinksEnabled = nextEnabled;
                 renderSocialLinks();
-                setSocialStatus('Tautan media sosial berhasil disimpan.', false);
+                setSocialStatus('Tautan dan pengaturan ON/OFF media sosial berhasil disimpan.', false);
             }
 
             function loadCustomerTestimonials() {
