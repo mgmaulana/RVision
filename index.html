@@ -716,12 +716,12 @@
                     <div class="rounded-2xl border border-sky-500/25 bg-gray-900/75 p-4 space-y-3">
                         <div>
                             <h4 class="text-xs font-bold uppercase tracking-wider text-white">Sinkronisasi Google Sheets</h4>
-                            <p class="mt-1 text-[10px] text-gray-400">Harga, WhatsApp, media sosial, testimoni, dan penjualan akan tersimpan bersama di spreadsheet.</p>
+                            <p class="mt-1 text-[10px] text-gray-400">Masukkan kunci sekali pada browser admin ini. Setelah tersambung, data akan disinkronkan otomatis.</p>
                         </div>
                         <div class="flex flex-col gap-2 sm:flex-row">
                             <input id="google-sheets-secret" type="password" autocomplete="current-password" placeholder="Kunci admin Google Sheets" class="min-w-0 flex-1 rounded-xl border border-gray-700 bg-gray-950 px-3 py-2 text-xs text-white focus:border-sky-500 focus:outline-none">
-                            <button type="button" onclick="connectGoogleSheets()" class="rounded-xl bg-sky-600 px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-sky-500">
-                                Hubungkan &amp; Muat Data
+                            <button type="button" id="google-sheets-connect-button" onclick="connectGoogleSheets()" class="rounded-xl bg-sky-600 px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-sky-500">
+                                Hubungkan Pertama Kali
                             </button>
                             <button type="button" onclick="disconnectGoogleSheets()" class="rounded-xl border border-gray-700 px-3 py-2 text-xs font-bold text-gray-300 transition-colors hover:bg-gray-800">
                                 Putuskan
@@ -2136,7 +2136,66 @@
             let googleSheetsAdminSecret = '';
             let googleSheetsPublicSyncInProgress = false;
             let googleSheetsAdminSyncInProgress = false;
+            let googleSheetsSecretStorageWarning = false;
             const productsWithoutPrivatePrices = new Set(['spotify', 'hbo', 'iqiyi']);
+
+            function getSavedGoogleSheetsSecret() {
+                let secret = '';
+                try {
+                    secret = localStorage.getItem(GOOGLE_SHEETS_SECRET_STORAGE_KEY) || '';
+                } catch (error) {
+                    console.error('Kunci admin tidak dapat dibaca dari penyimpanan browser.', error);
+                }
+                if (!secret) {
+                    try {
+                        secret = sessionStorage.getItem(GOOGLE_SHEETS_SECRET_STORAGE_KEY) || '';
+                        if (secret) {
+                            localStorage.setItem(GOOGLE_SHEETS_SECRET_STORAGE_KEY, secret);
+                            sessionStorage.removeItem(GOOGLE_SHEETS_SECRET_STORAGE_KEY);
+                        }
+                    } catch (error) {
+                        googleSheetsSecretStorageWarning = true;
+                        console.error('Kunci admin sesi tidak dapat dipindahkan ke penyimpanan browser.', error);
+                    }
+                }
+                return secret;
+            }
+
+            function saveGoogleSheetsSecret(secret) {
+                try {
+                    localStorage.setItem(GOOGLE_SHEETS_SECRET_STORAGE_KEY, secret);
+                    sessionStorage.removeItem(GOOGLE_SHEETS_SECRET_STORAGE_KEY);
+                    googleSheetsSecretStorageWarning = false;
+                } catch (error) {
+                    googleSheetsSecretStorageWarning = true;
+                    console.error('Kunci admin tidak dapat disimpan di browser ini.', error);
+                    try {
+                        sessionStorage.setItem(GOOGLE_SHEETS_SECRET_STORAGE_KEY, secret);
+                    } catch (sessionError) {
+                        console.error('Kunci admin juga tidak dapat disimpan untuk sesi ini.', sessionError);
+                    }
+                }
+            }
+
+            function clearSavedGoogleSheetsSecret() {
+                try {
+                    localStorage.removeItem(GOOGLE_SHEETS_SECRET_STORAGE_KEY);
+                } catch (error) {
+                    console.error('Kunci admin tersimpan tidak dapat dihapus.', error);
+                }
+                try {
+                    sessionStorage.removeItem(GOOGLE_SHEETS_SECRET_STORAGE_KEY);
+                } catch (error) {
+                    console.error('Kunci admin sesi tidak dapat dihapus.', error);
+                }
+            }
+
+            function setGoogleSheetsConnectionUi(connected) {
+                const secretInput = document.getElementById('google-sheets-secret');
+                const connectButton = document.getElementById('google-sheets-connect-button');
+                if (secretInput) secretInput.classList.toggle('hidden', connected);
+                if (connectButton) connectButton.classList.toggle('hidden', connected);
+            }
 
             function supportsPrivateAccount(product) {
                 return !!product && !productsWithoutPrivatePrices.has(product.id);
@@ -2510,7 +2569,7 @@
 
             function postGoogleSheetsAction(action, payload) {
                 if (!isGoogleSheetsConfigured()) return Promise.reject(new Error('URL Web App Google Sheets belum dipasang.'));
-                const secret = googleSheetsAdminSecret || sessionStorage.getItem(GOOGLE_SHEETS_SECRET_STORAGE_KEY);
+                const secret = googleSheetsAdminSecret || getSavedGoogleSheetsSecret();
                 if (!secret) return Promise.reject(new Error('Masukkan kunci admin Google Sheets terlebih dahulu.'));
 
                 return new Promise((resolve, reject) => {
@@ -2581,24 +2640,17 @@
                     return;
                 }
                 googleSheetsAdminSecret = secret;
-                try {
-                    sessionStorage.setItem(GOOGLE_SHEETS_SECRET_STORAGE_KEY, secret);
-                } catch (error) {
-                    console.error('Kunci admin tidak dapat disimpan di sesi browser.', error);
-                }
+                saveGoogleSheetsSecret(secret);
                 await loadGoogleSheetsAdminData(true);
             }
 
             async function loadGoogleSheetsAdminData(seedLocalData) {
                 if (googleSheetsAdminSyncInProgress) return;
                 if (!googleSheetsAdminSecret) {
-                    try {
-                        googleSheetsAdminSecret = sessionStorage.getItem(GOOGLE_SHEETS_SECRET_STORAGE_KEY) || '';
-                    } catch (error) {
-                        console.error('Kunci admin tidak dapat dibaca dari sesi browser.', error);
-                    }
+                    googleSheetsAdminSecret = getSavedGoogleSheetsSecret();
                 }
                 if (!googleSheetsAdminSecret) {
+                    setGoogleSheetsConnectionUi(false);
                     setGoogleSheetsSyncStatus('Masukkan kunci admin untuk memuat data privat dan mengelola spreadsheet.', true);
                     return;
                 }
@@ -2610,19 +2662,22 @@
                         localTestimonials: seedLocalData ? customerTestimonials : []
                     });
                     applyGoogleSheetsData(data, true);
-                    setGoogleSheetsSyncStatus('Tersambung. Perubahan admin dan spreadsheet akan disinkronkan bersama.', false);
+                    setGoogleSheetsConnectionUi(true);
+                    setGoogleSheetsSyncStatus(
+                        googleSheetsSecretStorageWarning
+                            ? 'Tersambung untuk sesi ini, tetapi browser tidak dapat menyimpan kunci otomatis.'
+                            : 'Tersambung. Perubahan admin dan spreadsheet akan disinkronkan bersama.',
+                        googleSheetsSecretStorageWarning
+                    );
                     const secretInput = document.getElementById('google-sheets-secret');
                     if (secretInput) secretInput.value = '';
                 } catch (error) {
                     console.error('Sinkronisasi admin Google Sheets gagal.', error);
                     if (error.message === 'Kunci admin tidak valid.') {
                         googleSheetsAdminSecret = '';
-                        try {
-                            sessionStorage.removeItem(GOOGLE_SHEETS_SECRET_STORAGE_KEY);
-                        } catch (storageError) {
-                            console.error('Kunci admin sesi tidak dapat dihapus.', storageError);
-                        }
+                        clearSavedGoogleSheetsSecret();
                     }
+                    setGoogleSheetsConnectionUi(false);
                     setGoogleSheetsSyncStatus(`Gagal tersambung: ${error.message}`, true);
                 } finally {
                     googleSheetsAdminSyncInProgress = false;
@@ -2633,14 +2688,12 @@
                 googleSheetsAdminSecret = '';
                 const secretInput = document.getElementById('google-sheets-secret');
                 if (secretInput) secretInput.value = '';
-                try {
-                    sessionStorage.removeItem(GOOGLE_SHEETS_SECRET_STORAGE_KEY);
-                } catch (error) {
-                    console.error('Kunci admin sesi tidak dapat dihapus.', error);
-                }
+                clearSavedGoogleSheetsSecret();
+                googleSheetsSecretStorageWarning = false;
+                setGoogleSheetsConnectionUi(false);
                 setGoogleSheetsSyncStatus(
                     isGoogleSheetsConfigured()
-                        ? 'Kunci admin dihapus dari sesi. Data publik masih dapat dimuat dari spreadsheet.'
+                        ? 'Kunci admin dihapus dari browser ini. Masukkan kembali untuk menyambungkan.'
                         : 'URL Web App belum dipasang. Sinkronisasi Google Sheets belum aktif.',
                     false
                 );
@@ -3900,11 +3953,7 @@
                     switchAdminSection('wa');
                     renderAdminProductEditors();
                     if (isGoogleSheetsConfigured()) {
-                        try {
-                            googleSheetsAdminSecret = sessionStorage.getItem(GOOGLE_SHEETS_SECRET_STORAGE_KEY) || '';
-                        } catch (error) {
-                            console.error('Kunci admin tidak dapat dibaca dari sesi browser.', error);
-                        }
+                        googleSheetsAdminSecret = getSavedGoogleSheetsSecret();
                         if (googleSheetsAdminSecret) loadGoogleSheetsAdminData(false);
                     }
                 } else if (pinErrorEl) {
@@ -4260,10 +4309,12 @@
             window.addEventListener('focus', refreshGoogleSheetsOnReturn);
             document.addEventListener('visibilitychange', refreshGoogleSheetsOnReturn);
             window.setInterval(function() {
+                if (!isGoogleSheetsConfigured() || document.visibilityState === 'hidden') return;
                 const adminContent = document.getElementById('admin-content-view');
-                if (isGoogleSheetsConfigured() && document.visibilityState !== 'hidden' &&
-                    adminContent && !adminContent.classList.contains('hidden') && googleSheetsAdminSecret) {
+                if (adminContent && !adminContent.classList.contains('hidden') && googleSheetsAdminSecret) {
                     loadGoogleSheetsAdminData(false);
+                } else {
+                    refreshGoogleSheetsPublicData();
                 }
             }, 60000);
         </script>
