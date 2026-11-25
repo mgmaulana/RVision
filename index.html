@@ -688,7 +688,12 @@
                         <h4 class="text-sm font-bold text-white">Masukkan PIN Admin</h4>
                         <p class="text-[11px] text-gray-400">Gunakan PIN 6 angka yang diatur di Script Properties Apps Script.</p>
                     </div>
-                    <input type="password" id="input-admin-pin" inputmode="numeric" autocomplete="off" placeholder="6 angka" maxlength="6" class="w-full text-center tracking-widest text-lg font-bold bg-gray-900 border border-gray-700 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-red-500">
+                    <div class="relative">
+                        <input type="password" id="input-admin-pin" inputmode="numeric" autocomplete="off" placeholder="6 angka" maxlength="6" class="w-full text-center tracking-widest text-lg font-bold bg-gray-900 border border-gray-700 rounded-xl px-4 py-2 pr-12 text-white focus:outline-none focus:border-red-500">
+                        <button type="button" id="toggle-admin-pin-visibility" onclick="toggleAdminPinVisibility()" aria-label="Tampilkan PIN" aria-pressed="false" class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-white">
+                            <i id="admin-pin-eye-icon" class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
                     <p id="pin-error-msg" class="text-xs text-red-500 hidden"></p>
                     <button type="button" id="admin-pin-submit-button" onclick="verifyAdminPin()" class="w-full py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-lg shadow-red-600/30 transition-all">
                         Masuk Panel Admin
@@ -3937,6 +3942,23 @@
                 if (modalEl) modalEl.classList.add('hidden');
             }
 
+            function setAdminPinVisibility(visible) {
+                const pinInput = document.getElementById('input-admin-pin');
+                const toggleButton = document.getElementById('toggle-admin-pin-visibility');
+                const eyeIcon = document.getElementById('admin-pin-eye-icon');
+                if (!pinInput || !toggleButton || !eyeIcon) return;
+                pinInput.type = visible ? 'text' : 'password';
+                toggleButton.setAttribute('aria-label', visible ? 'Sembunyikan PIN' : 'Tampilkan PIN');
+                toggleButton.setAttribute('aria-pressed', String(visible));
+                eyeIcon.classList.toggle('fa-eye', !visible);
+                eyeIcon.classList.toggle('fa-eye-slash', visible);
+            }
+
+            function toggleAdminPinVisibility() {
+                const pinInput = document.getElementById('input-admin-pin');
+                if (pinInput) setAdminPinVisibility(pinInput.type !== 'text');
+            }
+
             async function verifyAdminPin() {
                 const pinInputEl = document.getElementById('input-admin-pin');
                 const pinErrorEl = document.getElementById('pin-error-msg');
@@ -3968,6 +3990,7 @@
                     const result = await postGoogleSheetsAction('verifyAdminPin', { pin: enteredPin });
                     if (!result || result.authorized !== true) throw new Error('PIN Admin tidak valid.');
                     if (pinInputEl) pinInputEl.value = '';
+                    setAdminPinVisibility(false);
                     if (pinViewEl) pinViewEl.classList.add('hidden');
                     if (contentViewEl) contentViewEl.classList.remove('hidden');
                     if (waInputEl) waInputEl.value = adminWaNumber;
@@ -3980,6 +4003,7 @@
                     }
                 } catch (error) {
                     if (pinInputEl) pinInputEl.value = '';
+                    setAdminPinVisibility(false);
                     if (pinErrorEl) {
                         pinErrorEl.textContent = error.message || 'PIN Admin tidak valid.';
                         pinErrorEl.classList.remove('hidden');
