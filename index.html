@@ -869,7 +869,7 @@
                             <h5 class="text-[11px] font-bold uppercase tracking-wide text-gray-200 flex items-center gap-1.5">
                                 <i class="fa-solid fa-circle-plus text-red-400"></i> Tambah Produk
                             </h5>
-                            <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                            <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
                                 <div>
                                     <label for="new-product-name" class="mb-1 block text-[10px] font-semibold text-gray-400">Nama Produk</label>
                                     <input id="new-product-name" name="name" required maxlength="60" placeholder="Contoh: YouTube Premium" class="w-full rounded-lg border border-gray-700 bg-gray-900 px-2.5 py-2 text-xs text-white focus:border-red-500 focus:outline-none">
@@ -898,6 +898,11 @@
                                         <option value="fa-play">Play</option>
                                         <option value="fa-futbol">Olahraga</option>
                                     </select>
+                                </div>
+                                <div>
+                                    <label for="new-product-logo-url" class="mb-1 block text-[10px] font-semibold text-gray-400">URL Logo (opsional)</label>
+                                    <input id="new-product-logo-url" name="logoUrl" type="url" maxlength="2048" placeholder="https://.../logo.png" class="w-full rounded-lg border border-gray-700 bg-gray-900 px-2.5 py-2 text-xs text-white focus:border-red-500 focus:outline-none">
+                                    <p class="mt-1 text-[9px] text-gray-500">Gunakan tautan langsung HTTPS ke gambar. Logo menggantikan ikon.</p>
                                 </div>
                             </div>
                             <div class="space-y-1.5">
@@ -2595,6 +2600,7 @@
                     load: '/api/admin/data',
                     savePrices: '/api/admin/prices',
                     addProduct: '/api/admin/products/add',
+                    deleteProduct: '/api/admin/products/delete',
                     saveWhatsApp: '/api/admin/whatsapp',
                     saveSocial: '/api/admin/social',
                     addSale: '/api/admin/sales/add',
@@ -3303,6 +3309,8 @@
                     const safeBadge = escapeHtml(p.badge);
                     const safeIcon = escapeHtml(p.icon || 'fa-layer-group');
                     const safeBrandColor = escapeHtml(p.brandColor || 'text-gray-300');
+                    const logoSource = p.logoUrl || productLogos[p.id] || '';
+                    const safeLogoSource = escapeHtml(logoSource);
                     const iconFamily = safeIcon.includes('spotify') || safeIcon.includes('youtube') ? 'fa-brands' : 'fa-solid';
 
                     return `
@@ -3316,8 +3324,8 @@
 
                         <div class="space-y-1.5 text-center py-1">
                             <div class="w-11 h-11 rounded-xl bg-gray-900 border border-gray-800 flex items-center justify-center mx-auto text-xl ${safeBrandColor} group-hover:scale-110 transition-transform">
-                                ${productLogos[p.id]
-                                    ? `<img src="${productLogos[p.id]}" alt="${safeName} logo" class="w-full h-full object-cover rounded-xl">`
+                                ${logoSource
+                                    ? `<img src="${safeLogoSource}" alt="${safeName} logo" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-contain rounded-xl">`
                                     : `<i class="${iconFamily} ${safeIcon}"></i>`}
                             </div>
                             <h3 class="font-bold text-xs sm:text-sm text-white line-clamp-1">${safeName}</h3>
@@ -3373,7 +3381,7 @@
                 iconContainer.className = `h-11 w-11 shrink-0 sm:h-12 sm:w-12 rounded-xl bg-gray-900 border border-gray-800 flex items-center justify-center text-2xl font-bold overflow-hidden ${selectedProduct.brandColor}`;
                 iconContainer.replaceChildren();
 
-                const productLogo = productLogos[selectedProduct.id];
+                const productLogo = selectedProduct.logoUrl || productLogos[selectedProduct.id];
                 if (productLogo) {
                     const logoImage = document.createElement('img');
                     logoImage.src = productLogo;
@@ -4038,6 +4046,7 @@
                 const name = form.elements.namedItem('name').value.trim();
                 const category = form.elements.namedItem('category').value;
                 const icon = form.elements.namedItem('icon').value;
+                const logoUrl = form.elements.namedItem('logoUrl').value.trim();
                 const hasPrivate = document.getElementById('new-product-has-private').checked;
                 if (!isCloudflareConfigured() || !cloudflareAdminToken) {
                     setNewProductStatus('Masuk ke panel admin sebelum menambahkan produk.', true);
@@ -4077,6 +4086,7 @@
                             name,
                             category,
                             icon,
+                            logoUrl,
                             hasPrivate,
                             sharingPrices,
                             privatePrices
@@ -4093,6 +4103,35 @@
                     if (submitButton) submitButton.disabled = false;
                 }
                 return false;
+            }
+
+            async function deleteAdminProduct(productId) {
+                const product = products.find(item => item.id === productId);
+                if (!product || product.isCustom !== true) {
+                    setCloudflareSyncStatus('Hanya produk tambahan yang dapat dihapus dari menu ini.', true);
+                    return;
+                }
+                if (!isCloudflareConfigured() || !cloudflareAdminToken) {
+                    setCloudflareSyncStatus('Masuk ke panel admin sebelum menghapus produk.', true);
+                    return;
+                }
+                const confirmed = window.confirm(
+                    `Hapus produk "${product.name}" beserta harga dan logonya? Riwayat penjualan tetap disimpan.`
+                );
+                if (!confirmed) return;
+
+                const button = document.getElementById(`adm-delete-${product.id}`);
+                if (button) button.disabled = true;
+                try {
+                    const data = await postCloudflareAction('deleteProduct', { id: product.id });
+                    applyCloudflareData(data, false);
+                    setCloudflareSyncStatus(`Produk "${product.name}" berhasil dihapus. Riwayat penjualan tetap disimpan.`, false);
+                } catch (error) {
+                    console.error('Produk gagal dihapus dari Cloudflare D1.', error);
+                    setCloudflareSyncStatus(`Produk gagal dihapus: ${error.message}`, true);
+                } finally {
+                    if (button) button.disabled = false;
+                }
             }
 
             async function saveAdminPrices() {
@@ -4196,15 +4235,23 @@
                         const pr = p.privatePrices || { '7d': p.privatePrice || 0, '1m': p.privatePrice || 0, '3m': (p.privatePrice || 0) * 3 };
                         const productIcon = escapeHtml(p.icon || 'fa-layer-group');
                         const productIconFamily = productIcon.includes('spotify') || productIcon.includes('youtube') ? 'fa-brands' : 'fa-solid';
+                        const logoSource = p.logoUrl || '';
+                        const safeLogoSource = escapeHtml(logoSource);
+                        const productIconHtml = logoSource
+                            ? `<img src="${safeLogoSource}" alt="" loading="lazy" referrerpolicy="no-referrer" class="h-5 w-5 rounded object-contain">`
+                            : `<i class="${productIconFamily} ${productIcon} ${escapeHtml(p.brandColor || 'text-gray-300')}"></i>`;
 
                         return `
                             <div class="p-3.5 rounded-xl bg-gray-950/80 border border-gray-800/90 space-y-3">
                                 <div class="flex items-center justify-between gap-2 border-b border-gray-800/70 pb-2">
                                     <span class="flex items-center gap-2 text-xs font-bold text-white">
-                                        <i class="${productIconFamily} ${productIcon} ${escapeHtml(p.brandColor || 'text-gray-300')}"></i>
+                                        ${productIconHtml}
                                         ${escapeHtml(p.name)}
                                     </span>
-                                    <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase border ${meta.pillClass}">${meta.label}</span>
+                                    <span class="flex items-center gap-2">
+                                        <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase border ${meta.pillClass}">${meta.label}</span>
+                                        ${p.isCustom ? `<button id="adm-delete-${p.id}" type="button" onclick="deleteAdminProduct('${p.id}')" class="inline-flex items-center gap-1 rounded-md border border-red-500/30 px-2 py-1 text-[10px] font-semibold text-red-300 hover:bg-red-500/15" aria-label="Hapus produk ${escapeHtml(p.name)}"><i class="fa-solid fa-trash"></i> Hapus</button>` : ''}
+                                    </span>
                                 </div>
 
                                 <div class="space-y-1.5">
