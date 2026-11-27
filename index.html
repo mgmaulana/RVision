@@ -855,9 +855,6 @@
                                 <button type="button" onclick="toggleAllAdminCategories(false)" class="text-[11px] text-gray-400 hover:text-white transition-colors">
                                     Minimize Semua
                                 </button>
-                                <button type="button" onclick="resetPricesToDefault()" class="text-[11px] text-gray-400 hover:text-red-400 underline transition-colors">
-                                    Reset Ke Default
-                                </button>
                                 <button type="button" id="admin-save-prices-btn" onclick="saveAdminPrices()" class="px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold text-[11px] shadow-md shadow-red-600/25 flex items-center gap-1.5 transition-all active:scale-95">
                                     <i class="fa-solid fa-floppy-disk"></i>
                                     <span>Simpan Harga</span>
@@ -866,10 +863,13 @@
                         </div>
                         <p id="price-status-msg" class="text-[11px] text-emerald-400 hidden">Perubahan harga produk berhasil disimpan.</p>
                         <form id="admin-add-product-form" onsubmit="return addAdminProduct(event)" class="rounded-xl border border-gray-800 bg-gray-950/60 p-3.5 space-y-3">
-                            <h5 class="text-[11px] font-bold uppercase tracking-wide text-gray-200 flex items-center gap-1.5">
-                                <i class="fa-solid fa-circle-plus text-red-400"></i> Tambah Produk
-                            </h5>
-                            <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                            <details open class="group">
+                                <summary class="flex cursor-pointer list-none items-center justify-between gap-2 text-[11px] font-bold uppercase tracking-wide text-gray-200 [&::-webkit-details-marker]:hidden">
+                                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle-plus text-red-400"></i> Tambah Produk</span>
+                                    <i class="fa-solid fa-chevron-down text-gray-500 transition-transform group-open:rotate-180"></i>
+                                </summary>
+                                <div class="mt-3 space-y-3">
+                            <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
                                 <div>
                                     <label for="new-product-name" class="mb-1 block text-[10px] font-semibold text-gray-400">Nama Produk</label>
                                     <input id="new-product-name" name="name" required maxlength="60" placeholder="Contoh: YouTube Premium" class="w-full rounded-lg border border-gray-700 bg-gray-900 px-2.5 py-2 text-xs text-white focus:border-red-500 focus:outline-none">
@@ -883,26 +883,13 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label for="new-product-icon" class="mb-1 block text-[10px] font-semibold text-gray-400">Ikon</label>
-                                    <select id="new-product-icon" name="icon" required class="w-full rounded-lg border border-gray-700 bg-gray-900 px-2.5 py-2 text-xs text-white focus:border-red-500 focus:outline-none">
-                                        <option value="fa-film">Film</option>
-                                        <option value="fa-tv">TV</option>
-                                        <option value="fa-video">Video</option>
-                                        <option value="fa-music">Musik</option>
-                                        <option value="fa-headphones">Headphone</option>
-                                        <option value="fa-robot">Robot</option>
-                                        <option value="fa-gamepad">Game</option>
-                                        <option value="fa-book-open">Buku</option>
-                                        <option value="fa-mobile-screen-button">Ponsel</option>
-                                        <option value="fa-cloud">Cloud</option>
-                                        <option value="fa-play">Play</option>
-                                        <option value="fa-futbol">Olahraga</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label for="new-product-logo-url" class="mb-1 block text-[10px] font-semibold text-gray-400">URL Logo (opsional)</label>
-                                    <input id="new-product-logo-url" name="logoUrl" type="url" maxlength="2048" placeholder="https://.../logo.png" class="w-full rounded-lg border border-gray-700 bg-gray-900 px-2.5 py-2 text-xs text-white focus:border-red-500 focus:outline-none">
-                                    <p class="mt-1 text-[9px] text-gray-500">Gunakan tautan langsung HTTPS ke gambar. Logo menggantikan ikon.</p>
+                                    <label for="new-product-logo" class="mb-1 block text-[10px] font-semibold text-gray-400">Foto Logo (opsional)</label>
+                                    <input id="new-product-logo" name="logo" type="file" accept="image/png,image/jpeg,image/webp" onchange="previewNewProductLogo()" class="w-full rounded-lg border border-gray-700 bg-gray-900 px-2.5 py-2 text-xs text-white file:mr-2 file:rounded-md file:border-0 file:bg-gray-800 file:px-2 file:py-1 file:text-[10px] file:font-semibold file:text-gray-200">
+                                    <div id="new-product-logo-preview" class="mt-2 hidden items-center gap-2">
+                                        <img id="new-product-logo-preview-image" alt="Pratinjau logo produk" class="h-9 w-9 rounded-lg border border-gray-700 bg-gray-900 object-contain p-1">
+                                        <span class="text-[9px] text-gray-500">Pratinjau logo</span>
+                                    </div>
+                                    <p class="mt-1 text-[9px] text-gray-500">Unggah gambar PNG, JPG, atau WebP (maksimal 8 MB).</p>
                                 </div>
                             </div>
                             <div class="space-y-1.5">
@@ -943,6 +930,8 @@
                                     <i class="fa-solid fa-plus"></i> Tambah Produk
                                 </button>
                             </div>
+                                </div>
+                            </details>
                         </form>
                         <div id="admin-product-list" class="space-y-4 max-h-[340px] overflow-y-auto pr-1">
                             <!-- Dynamically rendered category bubble groups & product price editors -->
@@ -2205,7 +2194,7 @@
                         if (!document.hidden && !carousel.matches(':hover') && !carousel.contains(document.activeElement)) {
                             changeHeroSlide(1);
                         }
-                    }, 3000);
+                    }, 5000);
                 }
             }
 
@@ -3961,33 +3950,6 @@
                 }
             }
 
-            async function resetPricesToDefault() {
-                const previousProducts = JSON.parse(JSON.stringify(products));
-                const defaultReset = JSON.parse(JSON.stringify(defaultProducts));
-                if (!isCloudflareConfigured() || !cloudflareAdminToken) {
-                    setCloudflareSyncStatus('Masuk ke panel admin sebelum mereset harga.', true);
-                    return;
-                }
-                try {
-                    const data = await postCloudflareAction('savePrices', { products: defaultReset });
-                    applyCloudflareData(data, false);
-                } catch (error) {
-                    console.error('Reset harga gagal disimpan ke Cloudflare D1.', error);
-                    products = previousProducts;
-                    renderAdminProductEditors();
-                    filterCategory(activeCategory);
-                    setCloudflareSyncStatus(`Reset harga gagal disimpan: ${error.message}`, true);
-                    return;
-                }
-                const priceStatusEl = document.getElementById('price-status-msg');
-                if (priceStatusEl) {
-                    priceStatusEl.innerText = 'Harga default berhasil disimpan ke Cloudflare D1.';
-                    priceStatusEl.classList.remove('hidden');
-                }
-                renderAdminProductEditors();
-                filterCategory(activeCategory);
-            }
-
             function applyProductPricesFromInputs() {
                 products.forEach(p => {
                     const s7d = document.getElementById(`adm-${p.id}-s-7d`);
@@ -4023,6 +3985,71 @@
                 if (fields) fields.classList.toggle('hidden', !checkbox || !checkbox.checked);
             }
 
+            let newProductLogoPreviewUrl = '';
+
+            function previewNewProductLogo() {
+                const input = document.getElementById('new-product-logo');
+                const preview = document.getElementById('new-product-logo-preview');
+                const image = document.getElementById('new-product-logo-preview-image');
+                if (newProductLogoPreviewUrl) {
+                    URL.revokeObjectURL(newProductLogoPreviewUrl);
+                    newProductLogoPreviewUrl = '';
+                }
+                if (!input || !preview || !image) return;
+
+                const file = input.files && input.files[0];
+                if (!file) {
+                    preview.classList.add('hidden');
+                    preview.classList.remove('flex');
+                    return;
+                }
+                if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type) || file.size > 8 * 1024 * 1024) {
+                    input.value = '';
+                    preview.classList.add('hidden');
+                    preview.classList.remove('flex');
+                    setNewProductStatus('Pilih gambar PNG, JPG, atau WebP dengan ukuran maksimal 8 MB.', true);
+                    return;
+                }
+
+                newProductLogoPreviewUrl = URL.createObjectURL(file);
+                image.src = newProductLogoPreviewUrl;
+                preview.classList.remove('hidden');
+                preview.classList.add('flex');
+            }
+
+            async function encodeNewProductLogo(file) {
+                if (!file) return '';
+                if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type) || file.size > 8 * 1024 * 1024) {
+                    throw new Error('Pilih gambar PNG, JPG, atau WebP dengan ukuran maksimal 8 MB.');
+                }
+
+                let bitmap;
+                const canvas = document.createElement('canvas');
+                try {
+                    bitmap = await createImageBitmap(file);
+                    const scale = Math.min(1, 256 / Math.max(bitmap.width, bitmap.height));
+                    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+                    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+                    const context = canvas.getContext('2d');
+                    if (!context) throw new Error('Browser tidak dapat memproses gambar logo.');
+                    context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+                } catch (error) {
+                    if (error instanceof Error && error.message === 'Browser tidak dapat memproses gambar logo.') throw error;
+                    throw new Error('File logo tidak dapat dibuka sebagai gambar.');
+                } finally {
+                    if (bitmap) bitmap.close();
+                }
+
+                for (const quality of [0.82, 0.7, 0.58, 0.5]) {
+                    const dataUrl = canvas.toDataURL('image/webp', quality);
+                    if (!dataUrl.startsWith('data:image/webp;base64,')) {
+                        throw new Error('Browser ini tidak mendukung pemrosesan gambar WebP.');
+                    }
+                    if (dataUrl.length <= 100000) return dataUrl;
+                }
+                throw new Error('Ukuran logo masih terlalu besar setelah diproses. Gunakan gambar yang lebih sederhana.');
+            }
+
             function setNewProductStatus(message, isError) {
                 const status = document.getElementById('new-product-status');
                 if (!status) return;
@@ -4045,8 +4072,8 @@
                 const form = event.currentTarget;
                 const name = form.elements.namedItem('name').value.trim();
                 const category = form.elements.namedItem('category').value;
-                const icon = form.elements.namedItem('icon').value;
-                const logoUrl = form.elements.namedItem('logoUrl').value.trim();
+                const logoInput = form.elements.namedItem('logo');
+                const logoFile = logoInput && logoInput.files ? logoInput.files[0] : null;
                 const hasPrivate = document.getElementById('new-product-has-private').checked;
                 if (!isCloudflareConfigured() || !cloudflareAdminToken) {
                     setNewProductStatus('Masuk ke panel admin sebelum menambahkan produk.', true);
@@ -4079,13 +4106,14 @@
 
                 const submitButton = form.querySelector('button[type="submit"]');
                 if (submitButton) submitButton.disabled = true;
-                setNewProductStatus('Menyimpan produk ke Cloudflare D1...', false);
+                setNewProductStatus('Menyiapkan gambar dan menyimpan produk ke Cloudflare D1...', false);
                 try {
+                    const logoUrl = await encodeNewProductLogo(logoFile);
                     const data = await postCloudflareAction('addProduct', {
                         product: {
                             name,
                             category,
-                            icon,
+                            icon: { video: 'fa-film', music: 'fa-music', ai: 'fa-robot' }[category],
                             logoUrl,
                             hasPrivate,
                             sharingPrices,
@@ -4093,7 +4121,16 @@
                         }
                     });
                     applyCloudflareData(data, false);
+                    if (newProductLogoPreviewUrl) {
+                        URL.revokeObjectURL(newProductLogoPreviewUrl);
+                        newProductLogoPreviewUrl = '';
+                    }
                     form.reset();
+                    const logoPreview = document.getElementById('new-product-logo-preview');
+                    if (logoPreview) {
+                        logoPreview.classList.add('hidden');
+                        logoPreview.classList.remove('flex');
+                    }
                     toggleNewProductPrivateFields();
                     setNewProductStatus('Produk dan daftar harganya berhasil ditambahkan ke Cloudflare D1.', false);
                 } catch (error) {
