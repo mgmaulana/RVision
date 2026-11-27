@@ -865,6 +865,80 @@
                             </div>
                         </div>
                         <p id="price-status-msg" class="text-[11px] text-emerald-400 hidden">Perubahan harga produk berhasil disimpan.</p>
+                        <form id="admin-add-product-form" onsubmit="return addAdminProduct(event)" class="rounded-xl border border-gray-800 bg-gray-950/60 p-3.5 space-y-3">
+                            <h5 class="text-[11px] font-bold uppercase tracking-wide text-gray-200 flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-plus text-red-400"></i> Tambah Produk
+                            </h5>
+                            <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                                <div>
+                                    <label for="new-product-name" class="mb-1 block text-[10px] font-semibold text-gray-400">Nama Produk</label>
+                                    <input id="new-product-name" name="name" required maxlength="60" placeholder="Contoh: YouTube Premium" class="w-full rounded-lg border border-gray-700 bg-gray-900 px-2.5 py-2 text-xs text-white focus:border-red-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label for="new-product-category" class="mb-1 block text-[10px] font-semibold text-gray-400">Kategori</label>
+                                    <select id="new-product-category" name="category" required class="w-full rounded-lg border border-gray-700 bg-gray-900 px-2.5 py-2 text-xs text-white focus:border-red-500 focus:outline-none">
+                                        <option value="video">Streaming Video</option>
+                                        <option value="music">Musik</option>
+                                        <option value="ai">AI</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="new-product-icon" class="mb-1 block text-[10px] font-semibold text-gray-400">Ikon</label>
+                                    <select id="new-product-icon" name="icon" required class="w-full rounded-lg border border-gray-700 bg-gray-900 px-2.5 py-2 text-xs text-white focus:border-red-500 focus:outline-none">
+                                        <option value="fa-film">Film</option>
+                                        <option value="fa-tv">TV</option>
+                                        <option value="fa-video">Video</option>
+                                        <option value="fa-music">Musik</option>
+                                        <option value="fa-headphones">Headphone</option>
+                                        <option value="fa-robot">Robot</option>
+                                        <option value="fa-gamepad">Game</option>
+                                        <option value="fa-book-open">Buku</option>
+                                        <option value="fa-mobile-screen-button">Ponsel</option>
+                                        <option value="fa-cloud">Cloud</option>
+                                        <option value="fa-play">Play</option>
+                                        <option value="fa-futbol">Olahraga</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="space-y-1.5">
+                                <span class="text-[10px] font-semibold text-red-400">Harga Sharing</span>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <label class="text-[10px] text-gray-400">7 Hari
+                                        <input name="sharing-7d" type="number" min="0" step="1" required value="0" class="mt-1 w-full rounded-lg border border-gray-700 bg-gray-900 px-2.5 py-1.5 text-xs font-mono text-white focus:border-red-500 focus:outline-none">
+                                    </label>
+                                    <label class="text-[10px] text-gray-400">1 Bulan
+                                        <input name="sharing-1m" type="number" min="0" step="1" required value="0" class="mt-1 w-full rounded-lg border border-gray-700 bg-gray-900 px-2.5 py-1.5 text-xs font-mono text-white focus:border-red-500 focus:outline-none">
+                                    </label>
+                                    <label class="text-[10px] text-gray-400">3 Bulan
+                                        <input name="sharing-3m" type="number" min="0" step="1" required value="0" class="mt-1 w-full rounded-lg border border-gray-700 bg-gray-900 px-2.5 py-1.5 text-xs font-mono text-white focus:border-red-500 focus:outline-none">
+                                    </label>
+                                </div>
+                            </div>
+                            <label class="inline-flex items-center gap-2 text-[11px] text-gray-300">
+                                <input id="new-product-has-private" type="checkbox" class="rounded border-gray-600 bg-gray-900 text-red-600 focus:ring-red-500" onchange="toggleNewProductPrivateFields()">
+                                Produk ini menyediakan akun Private
+                            </label>
+                            <div id="new-product-private-fields" class="hidden space-y-1.5">
+                                <span class="text-[10px] font-semibold text-blue-400">Harga Private</span>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <label class="text-[10px] text-gray-400">7 Hari
+                                        <input name="private-7d" type="number" min="0" step="1" value="0" class="mt-1 w-full rounded-lg border border-gray-700 bg-gray-900 px-2.5 py-1.5 text-xs font-mono text-white focus:border-red-500 focus:outline-none">
+                                    </label>
+                                    <label class="text-[10px] text-gray-400">1 Bulan
+                                        <input name="private-1m" type="number" min="0" step="1" value="0" class="mt-1 w-full rounded-lg border border-gray-700 bg-gray-900 px-2.5 py-1.5 text-xs font-mono text-white focus:border-red-500 focus:outline-none">
+                                    </label>
+                                    <label class="text-[10px] text-gray-400">3 Bulan
+                                        <input name="private-3m" type="number" min="0" step="1" value="0" class="mt-1 w-full rounded-lg border border-gray-700 bg-gray-900 px-2.5 py-1.5 text-xs font-mono text-white focus:border-red-500 focus:outline-none">
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                <p id="new-product-status" role="status" aria-live="polite" class="hidden text-[11px]"></p>
+                                <button type="submit" class="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-red-600 px-3 py-2 text-[11px] font-bold text-white transition-colors hover:bg-red-500">
+                                    <i class="fa-solid fa-plus"></i> Tambah Produk
+                                </button>
+                            </div>
+                        </form>
                         <div id="admin-product-list" class="space-y-4 max-h-[340px] overflow-y-auto pr-1">
                             <!-- Dynamically rendered category bubble groups & product price editors -->
                         </div>
@@ -2164,7 +2238,10 @@
             }
 
             function supportsPrivateAccount(product) {
-                return !!product && !productsWithoutPrivatePrices.has(product.id);
+                return !!product && (
+                    product.hasPrivate === true ||
+                    (!productsWithoutPrivatePrices.has(product.id) && !!product.privatePrices)
+                );
             }
 
             // Default Catalog Data supporting 7 Hari, 1 Bulan, and 3 Bulan
@@ -2369,7 +2446,7 @@
             }
 
             function isCloudflareConfigured() {
-                return /^https:\/\/[a-z0-9-]+\.workers\.dev$/i.test(CLOUDFLARE_WORKER_URL);
+                return /^https:\/\/[a-z0-9-]+(?:\.[a-z0-9-]+)*\.workers\.dev$/i.test(CLOUDFLARE_WORKER_URL);
             }
 
             function setCloudflareSyncStatus(message, isError) {
@@ -2383,14 +2460,14 @@
                 if (!data || typeof data !== 'object') throw new Error('Respons Cloudflare tidak valid.');
 
                 if (Array.isArray(data.products)) {
-                    const remoteProducts = new Map(data.products.map(product => [product.id, product]));
-                    products = products.map(product => {
-                        const remote = remoteProducts.get(product.id);
-                        if (!remote) return product;
-                        const next = { ...product };
+                    const localProducts = new Map(products.map(product => [product.id, product]));
+                    const defaultProductsById = new Map(defaultProducts.map(product => [product.id, product]));
+                    products = data.products.map(remote => {
+                        const base = localProducts.get(remote.id) || defaultProductsById.get(remote.id) || {};
+                        const next = { ...base, ...remote };
                         for (const [sourceKey, targetKey] of [['sharingPrices', 'sharingPrices'], ['privatePrices', 'privatePrices']]) {
-                            if (!remote[sourceKey] || !next[targetKey]) continue;
-                            const prices = { ...next[targetKey] };
+                            if (!remote[sourceKey]) continue;
+                            const prices = { ...(next[targetKey] || {}) };
                             for (const duration of ['7d', '1m', '3m']) {
                                 const amount = remote[sourceKey][duration];
                                 if (Number.isSafeInteger(amount) && amount >= 0) prices[duration] = amount;
@@ -2517,6 +2594,7 @@
                 const endpointByAction = {
                     load: '/api/admin/data',
                     savePrices: '/api/admin/prices',
+                    addProduct: '/api/admin/products/add',
                     saveWhatsApp: '/api/admin/whatsapp',
                     saveSocial: '/api/admin/social',
                     addSale: '/api/admin/sales/add',
@@ -3221,23 +3299,28 @@
                     const curDur = cardSelectedDuration[p.id] || '1m';
                     const curPrice = (p.sharingPrices && p.sharingPrices[curDur]) ? p.sharingPrices[curDur] : p.sharingPrice || 0;
                     const durText = curDur === '7d' ? '7 Hari' : (curDur === '3m' ? '3 Bulan' : '1 Bulan');
+                    const safeName = escapeHtml(p.name);
+                    const safeBadge = escapeHtml(p.badge);
+                    const safeIcon = escapeHtml(p.icon || 'fa-layer-group');
+                    const safeBrandColor = escapeHtml(p.brandColor || 'text-gray-300');
+                    const iconFamily = safeIcon.includes('spotify') || safeIcon.includes('youtube') ? 'fa-brands' : 'fa-solid';
 
                     return `
                     <div class="glass-card p-4 rounded-2xl flex flex-col justify-between space-y-3 relative overflow-hidden group">
                         <div class="flex items-center justify-between">
                             <span class="px-2.5 py-0.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 font-semibold text-[10px]">
-                                ${p.badge}
+                                ${safeBadge}
                             </span>
                             <i class="fa-solid fa-crown text-amber-400 text-xs opacity-75"></i>
                         </div>
 
                         <div class="space-y-1.5 text-center py-1">
-                            <div class="w-11 h-11 rounded-xl bg-gray-900 border border-gray-800 flex items-center justify-center mx-auto text-xl ${p.brandColor} group-hover:scale-110 transition-transform">
+                            <div class="w-11 h-11 rounded-xl bg-gray-900 border border-gray-800 flex items-center justify-center mx-auto text-xl ${safeBrandColor} group-hover:scale-110 transition-transform">
                                 ${productLogos[p.id]
-                                    ? `<img src="${productLogos[p.id]}" alt="${p.name} logo" class="w-full h-full object-cover rounded-xl">`
-                                    : `<i class="fa-brands ${p.icon.startsWith('fa-') && (p.icon.includes('spotify') || p.icon.includes('youtube')) ? p.icon : 'fa-solid ' + p.icon}"></i>`}
+                                    ? `<img src="${productLogos[p.id]}" alt="${safeName} logo" class="w-full h-full object-cover rounded-xl">`
+                                    : `<i class="${iconFamily} ${safeIcon}"></i>`}
                             </div>
-                            <h3 class="font-bold text-xs sm:text-sm text-white line-clamp-1">${p.name}</h3>
+                            <h3 class="font-bold text-xs sm:text-sm text-white line-clamp-1">${safeName}</h3>
                         </div>
 
                         <!-- Duration Selector Tabs on Card -->
@@ -3260,6 +3343,16 @@
                         </button>
                     </div>
                 `}).join('');
+            }
+
+            function escapeHtml(value) {
+                return String(value == null ? '' : value).replace(/[&<>"']/g, character => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#39;'
+                })[character]);
             }
 
             function changeCardDuration(productId, dur) {
@@ -3916,6 +4009,92 @@
                 return true;
             }
 
+            function toggleNewProductPrivateFields() {
+                const checkbox = document.getElementById('new-product-has-private');
+                const fields = document.getElementById('new-product-private-fields');
+                if (fields) fields.classList.toggle('hidden', !checkbox || !checkbox.checked);
+            }
+
+            function setNewProductStatus(message, isError) {
+                const status = document.getElementById('new-product-status');
+                if (!status) return;
+                status.textContent = message;
+                status.className = `text-[11px] ${isError ? 'text-red-400' : 'text-emerald-400'}`;
+                status.classList.toggle('hidden', !message);
+            }
+
+            function readNewProductPrice(form, fieldName) {
+                const input = form.elements.namedItem(fieldName);
+                const value = input ? Number(input.value) : NaN;
+                if (!input || input.value.trim() === '' || !Number.isSafeInteger(value) || value < 0) {
+                    throw new Error('Semua harga harus berupa angka bulat nol atau lebih.');
+                }
+                return value;
+            }
+
+            async function addAdminProduct(event) {
+                event.preventDefault();
+                const form = event.currentTarget;
+                const name = form.elements.namedItem('name').value.trim();
+                const category = form.elements.namedItem('category').value;
+                const icon = form.elements.namedItem('icon').value;
+                const hasPrivate = document.getElementById('new-product-has-private').checked;
+                if (!isCloudflareConfigured() || !cloudflareAdminToken) {
+                    setNewProductStatus('Masuk ke panel admin sebelum menambahkan produk.', true);
+                    return false;
+                }
+                if (products.some(product => product.name.toLowerCase() === name.toLowerCase())) {
+                    setNewProductStatus('Nama produk sudah ada. Gunakan nama yang berbeda.', true);
+                    return false;
+                }
+
+                let sharingPrices;
+                let privatePrices;
+                try {
+                    sharingPrices = {
+                        '7d': readNewProductPrice(form, 'sharing-7d'),
+                        '1m': readNewProductPrice(form, 'sharing-1m'),
+                        '3m': readNewProductPrice(form, 'sharing-3m')
+                    };
+                    if (hasPrivate) {
+                        privatePrices = {
+                            '7d': readNewProductPrice(form, 'private-7d'),
+                            '1m': readNewProductPrice(form, 'private-1m'),
+                            '3m': readNewProductPrice(form, 'private-3m')
+                        };
+                    }
+                } catch (error) {
+                    setNewProductStatus(error.message, true);
+                    return false;
+                }
+
+                const submitButton = form.querySelector('button[type="submit"]');
+                if (submitButton) submitButton.disabled = true;
+                setNewProductStatus('Menyimpan produk ke Cloudflare D1...', false);
+                try {
+                    const data = await postCloudflareAction('addProduct', {
+                        product: {
+                            name,
+                            category,
+                            icon,
+                            hasPrivate,
+                            sharingPrices,
+                            privatePrices
+                        }
+                    });
+                    applyCloudflareData(data, false);
+                    form.reset();
+                    toggleNewProductPrivateFields();
+                    setNewProductStatus('Produk dan daftar harganya berhasil ditambahkan ke Cloudflare D1.', false);
+                } catch (error) {
+                    console.error('Produk baru gagal disimpan ke Cloudflare D1.', error);
+                    setNewProductStatus(`Produk gagal ditambahkan: ${error.message}`, true);
+                } finally {
+                    if (submitButton) submitButton.disabled = false;
+                }
+                return false;
+            }
+
             async function saveAdminPrices() {
                 const previousProducts = JSON.parse(JSON.stringify(products));
                 if (!isCloudflareConfigured() || !cloudflareAdminToken) {
@@ -4015,11 +4194,16 @@
                     const productCardsHtml = catProducts.map(p => {
                         const s = p.sharingPrices || { '7d': p.sharingPrice || 0, '1m': p.sharingPrice || 0, '3m': (p.sharingPrice || 0) * 3 };
                         const pr = p.privatePrices || { '7d': p.privatePrice || 0, '1m': p.privatePrice || 0, '3m': (p.privatePrice || 0) * 3 };
+                        const productIcon = escapeHtml(p.icon || 'fa-layer-group');
+                        const productIconFamily = productIcon.includes('spotify') || productIcon.includes('youtube') ? 'fa-brands' : 'fa-solid';
 
                         return `
                             <div class="p-3.5 rounded-xl bg-gray-950/80 border border-gray-800/90 space-y-3">
                                 <div class="flex items-center justify-between gap-2 border-b border-gray-800/70 pb-2">
-                                    <span class="text-xs font-bold text-white">${p.name}</span>
+                                    <span class="flex items-center gap-2 text-xs font-bold text-white">
+                                        <i class="${productIconFamily} ${productIcon} ${escapeHtml(p.brandColor || 'text-gray-300')}"></i>
+                                        ${escapeHtml(p.name)}
+                                    </span>
                                     <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase border ${meta.pillClass}">${meta.label}</span>
                                 </div>
 
