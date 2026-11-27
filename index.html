@@ -686,7 +686,7 @@
                     </div>
                     <div class="space-y-1">
                         <h4 class="text-sm font-bold text-white">Masukkan PIN Admin</h4>
-                        <p class="text-[11px] text-gray-400">Gunakan PIN 6 angka yang diatur di Script Properties Apps Script.</p>
+                        <p class="text-[11px] text-gray-400">Masukkan PIN admin Cloudflare yang sudah dikonfigurasi untuk Worker.</p>
                     </div>
                     <div class="relative">
                         <input type="password" id="input-admin-pin" inputmode="numeric" autocomplete="off" placeholder="6 angka" maxlength="6" class="w-full text-center tracking-widest text-lg font-bold bg-gray-900 border border-gray-700 rounded-xl px-4 py-2 pr-12 text-white focus:outline-none focus:border-red-500">
@@ -720,19 +720,15 @@
 
                     <div class="rounded-2xl border border-sky-500/25 bg-gray-900/75 p-4 space-y-3">
                         <div>
-                            <h4 class="text-xs font-bold uppercase tracking-wider text-white">Sinkronisasi Google Sheets</h4>
-                            <p class="mt-1 text-[10px] text-gray-400">Masukkan kunci sekali pada browser admin ini. Setelah tersambung, data akan disinkronkan otomatis.</p>
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-white">Penyimpanan Cloudflare D1</h4>
+                            <p class="mt-1 text-[10px] text-gray-400">Data menu admin disimpan ke database Cloudflare melalui Worker.</p>
                         </div>
-                        <div class="flex flex-col gap-2 sm:flex-row">
-                            <input id="google-sheets-secret" type="password" autocomplete="current-password" placeholder="Kunci admin Google Sheets" class="min-w-0 flex-1 rounded-xl border border-gray-700 bg-gray-950 px-3 py-2 text-xs text-white focus:border-sky-500 focus:outline-none">
-                            <button type="button" id="google-sheets-connect-button" onclick="connectGoogleSheets()" class="rounded-xl bg-sky-600 px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-sky-500">
-                                Hubungkan Pertama Kali
-                            </button>
-                            <button type="button" onclick="disconnectGoogleSheets()" class="rounded-xl border border-gray-700 px-3 py-2 text-xs font-bold text-gray-300 transition-colors hover:bg-gray-800">
-                                Putuskan
+                        <div class="flex justify-end">
+                            <button type="button" onclick="disconnectCloudflare()" class="rounded-xl border border-gray-700 px-3 py-2 text-xs font-bold text-gray-300 transition-colors hover:bg-gray-800">
+                                Keluar dari Admin
                             </button>
                         </div>
-                        <p id="google-sheets-sync-status" role="status" aria-live="polite" class="text-[11px] text-amber-300">URL Web App belum dipasang. Sinkronisasi Google Sheets belum aktif.</p>
+                        <p id="cloudflare-sync-status" role="status" aria-live="polite" class="text-[11px] text-amber-300">Menghubungkan ke Cloudflare...</p>
                     </div>
 
                     <!-- Bubble 1: WhatsApp Number Setting -->
@@ -2134,70 +2130,37 @@
                 }
             }
 
-            const GOOGLE_SHEETS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzyMD4wWJJ05ilPkDQlUrCjGYFTF6VpLXfzd4e9VTOjuA_kCwhzBNUiITuX7Si4LuiHCQ/exec';
-            const GOOGLE_SHEETS_SECRET_STORAGE_KEY = 'r_vision_google_sheets_admin_secret';
-            let googleSheetsAdminSecret = '';
-            let googleSheetsPublicSyncInProgress = false;
-            let googleSheetsAdminSyncInProgress = false;
-            let googleSheetsSecretStorageWarning = false;
+            const CLOUDFLARE_WORKER_URL = 'https://rv-vision-api.muhamadgilang0.workers.dev';
+            const CLOUDFLARE_ADMIN_TOKEN_KEY = 'r_vision_cloudflare_admin_token';
+            let cloudflareAdminToken = '';
+            let cloudflarePublicSyncInProgress = false;
+            let cloudflareAdminSyncInProgress = false;
             const productsWithoutPrivatePrices = new Set(['spotify', 'hbo', 'iqiyi']);
 
-            function getSavedGoogleSheetsSecret() {
-                let secret = '';
+            function getSavedCloudflareToken() {
                 try {
-                    secret = localStorage.getItem(GOOGLE_SHEETS_SECRET_STORAGE_KEY) || '';
+                    return sessionStorage.getItem(CLOUDFLARE_ADMIN_TOKEN_KEY) || '';
                 } catch (error) {
-                    console.error('Kunci admin tidak dapat dibaca dari penyimpanan browser.', error);
-                }
-                if (!secret) {
-                    try {
-                        secret = sessionStorage.getItem(GOOGLE_SHEETS_SECRET_STORAGE_KEY) || '';
-                        if (secret) {
-                            localStorage.setItem(GOOGLE_SHEETS_SECRET_STORAGE_KEY, secret);
-                            sessionStorage.removeItem(GOOGLE_SHEETS_SECRET_STORAGE_KEY);
-                        }
-                    } catch (error) {
-                        googleSheetsSecretStorageWarning = true;
-                        console.error('Kunci admin sesi tidak dapat dipindahkan ke penyimpanan browser.', error);
-                    }
-                }
-                return secret;
-            }
-
-            function saveGoogleSheetsSecret(secret) {
-                try {
-                    localStorage.setItem(GOOGLE_SHEETS_SECRET_STORAGE_KEY, secret);
-                    sessionStorage.removeItem(GOOGLE_SHEETS_SECRET_STORAGE_KEY);
-                    googleSheetsSecretStorageWarning = false;
-                } catch (error) {
-                    googleSheetsSecretStorageWarning = true;
-                    console.error('Kunci admin tidak dapat disimpan di browser ini.', error);
-                    try {
-                        sessionStorage.setItem(GOOGLE_SHEETS_SECRET_STORAGE_KEY, secret);
-                    } catch (sessionError) {
-                        console.error('Kunci admin juga tidak dapat disimpan untuk sesi ini.', sessionError);
-                    }
+                    console.error('Sesi admin tidak dapat dibaca dari penyimpanan browser.', error);
+                    return '';
                 }
             }
 
-            function clearSavedGoogleSheetsSecret() {
+            function saveCloudflareToken(token) {
                 try {
-                    localStorage.removeItem(GOOGLE_SHEETS_SECRET_STORAGE_KEY);
+                    sessionStorage.setItem(CLOUDFLARE_ADMIN_TOKEN_KEY, token);
                 } catch (error) {
-                    console.error('Kunci admin tersimpan tidak dapat dihapus.', error);
+                    console.error('Sesi admin tidak dapat disimpan di browser.', error);
+                    throw new Error('Browser tidak dapat menyimpan sesi admin. Periksa pengaturan penyimpanan.');
                 }
+            }
+
+            function clearSavedCloudflareToken() {
                 try {
-                    sessionStorage.removeItem(GOOGLE_SHEETS_SECRET_STORAGE_KEY);
+                    sessionStorage.removeItem(CLOUDFLARE_ADMIN_TOKEN_KEY);
                 } catch (error) {
                     console.error('Kunci admin sesi tidak dapat dihapus.', error);
                 }
-            }
-
-            function setGoogleSheetsConnectionUi(connected) {
-                const secretInput = document.getElementById('google-sheets-secret');
-                const connectButton = document.getElementById('google-sheets-connect-button');
-                if (secretInput) secretInput.classList.toggle('hidden', connected);
-                if (connectButton) connectButton.classList.toggle('hidden', connected);
             }
 
             function supportsPrivateAccount(product) {
@@ -2358,7 +2321,7 @@
                 }
             ];
 
-            // Load Settings from LocalStorage
+            // Load cached settings; Cloudflare D1 refreshes the authoritative values on page load.
             function loadStoredData() {
                 try {
                     const savedProducts = localStorage.getItem('mg_vision_products');
@@ -2405,19 +2368,19 @@
                 loadSalesRecords();
             }
 
-            function isGoogleSheetsConfigured() {
-                return /^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec$/.test(GOOGLE_SHEETS_WEB_APP_URL);
+            function isCloudflareConfigured() {
+                return /^https:\/\/[a-z0-9-]+\.workers\.dev$/i.test(CLOUDFLARE_WORKER_URL);
             }
 
-            function setGoogleSheetsSyncStatus(message, isError) {
-                const status = document.getElementById('google-sheets-sync-status');
+            function setCloudflareSyncStatus(message, isError) {
+                const status = document.getElementById('cloudflare-sync-status');
                 if (!status) return;
                 status.textContent = message;
                 status.className = `text-[11px] ${isError ? 'text-red-400' : 'text-emerald-300'}`;
             }
 
-            function applyGoogleSheetsData(data, includePrivateData) {
-                if (!data || typeof data !== 'object') throw new Error('Respons Google Sheets tidak valid.');
+            function applyCloudflareData(data, includePrivateData) {
+                if (!data || typeof data !== 'object') throw new Error('Respons Cloudflare tidak valid.');
 
                 if (Array.isArray(data.products)) {
                     const remoteProducts = new Map(data.products.map(product => [product.id, product]));
@@ -2439,7 +2402,7 @@
                     try {
                         localStorage.setItem('mg_vision_products', JSON.stringify(products));
                     } catch (error) {
-                        console.error('Harga dari Google Sheets tidak dapat disimpan ke cache lokal.', error);
+                        console.error('Cache harga dari Cloudflare tidak dapat disimpan.', error);
                     }
                     filterCategory(activeCategory);
                     renderAdminProductEditors();
@@ -2459,7 +2422,7 @@
                         localStorage.setItem('mg_vision_admin1_enabled', String(isAdmin1Enabled));
                         localStorage.setItem('mg_vision_admin2_enabled', String(isAdmin2Enabled));
                     } catch (error) {
-                        console.error('Nomor WhatsApp dari Google Sheets tidak dapat disimpan ke cache lokal.', error);
+                        console.error('Cache nomor WhatsApp dari Cloudflare tidak dapat disimpan.', error);
                     }
                     const waInput = document.getElementById('admin-wa-input');
                     const waInput2 = document.getElementById('admin-wa-input-2');
@@ -2477,7 +2440,7 @@
                     for (const platform of ['instagram', 'tiktok', 'youtube']) {
                         const entry = data.social[platform] || {};
                         const validated = getValidatedSocialUrl(String(entry.url || ''), platform);
-                        if (validated === null) throw new Error(`Tautan ${platform} di Google Sheets tidak valid.`);
+                        if (validated === null) throw new Error(`Tautan ${platform} dari Cloudflare tidak valid.`);
                         nextLinks[platform] = validated;
                         nextEnabled[platform] = entry.enabled !== false;
                     }
@@ -2486,7 +2449,7 @@
                     try {
                         localStorage.setItem(SOCIAL_LINKS_STORAGE_KEY, JSON.stringify({ ...nextLinks, enabled: nextEnabled }));
                     } catch (error) {
-                        console.error('Tautan media sosial dari Google Sheets tidak dapat disimpan ke cache lokal.', error);
+                        console.error('Cache media sosial dari Cloudflare tidak dapat disimpan.', error);
                     }
                     for (const platform of ['instagram', 'tiktok', 'youtube']) {
                         const input = document.getElementById(`admin-social-${platform}`);
@@ -2511,7 +2474,7 @@
                     try {
                         localStorage.setItem(TESTIMONIALS_STORAGE_KEY, JSON.stringify(customerTestimonials));
                     } catch (error) {
-                        console.error('Testimoni dari Google Sheets tidak dapat disimpan ke cache lokal.', error);
+                        console.error('Cache testimoni dari Cloudflare tidak dapat disimpan.', error);
                     }
                     renderCustomerTestimonials();
                 }
@@ -2521,188 +2484,98 @@
                     try {
                         localStorage.setItem(SALES_RECORDS_STORAGE_KEY, JSON.stringify(salesRecords));
                     } catch (error) {
-                        console.error('Data penjualan dari Google Sheets tidak dapat disimpan ke cache lokal.', error);
+                        console.error('Cache penjualan dari Cloudflare tidak dapat disimpan.', error);
                     }
                     renderSalesRecords();
                 }
             }
 
-            function refreshGoogleSheetsPublicData() {
-                if (!isGoogleSheetsConfigured() || googleSheetsPublicSyncInProgress) return Promise.resolve(false);
-                googleSheetsPublicSyncInProgress = true;
-                return new Promise((resolve, reject) => {
-                    const callbackName = `rVisionSheets_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-                    const script = document.createElement('script');
-                    let timeoutId;
-                    const cleanup = () => {
-                        window.clearTimeout(timeoutId);
-                        script.remove();
-                        delete window[callbackName];
-                        googleSheetsPublicSyncInProgress = false;
-                    };
-                    window[callbackName] = response => {
-                        cleanup();
-                        if (!response || response.ok !== true) {
-                            reject(new Error(response && response.error ? response.error : 'Google Sheets gagal mengirim data publik.'));
-                            return;
-                        }
-                        try {
-                            applyGoogleSheetsData(response.data, false);
-                            resolve(true);
-                        } catch (error) {
-                            reject(error);
-                        }
-                    };
-                    script.onerror = () => {
-                        cleanup();
-                        reject(new Error('Web App Google Sheets tidak dapat dijangkau.'));
-                    };
-                    timeoutId = window.setTimeout(() => {
-                        cleanup();
-                        reject(new Error('Waktu tunggu sinkronisasi Google Sheets habis.'));
-                    }, 15000);
-                    script.src = `${GOOGLE_SHEETS_WEB_APP_URL}?action=public&callback=${callbackName}&_=${Date.now()}`;
-                    document.head.appendChild(script);
-                }).catch(error => {
-                    console.error('Sinkronisasi data publik Google Sheets gagal.', error);
-                    setGoogleSheetsSyncStatus(`Gagal memuat data publik: ${error.message}`, true);
-                    return false;
-                });
-            }
-
-            function postGoogleSheetsAction(action, payload) {
-                if (!isGoogleSheetsConfigured()) return Promise.reject(new Error('URL Web App Google Sheets belum dipasang.'));
-                const secret = action === 'verifyAdminPin'
-                    ? ''
-                    : googleSheetsAdminSecret || getSavedGoogleSheetsSecret();
-                if (action !== 'verifyAdminPin' && !secret) {
-                    return Promise.reject(new Error('Masukkan kunci admin Google Sheets terlebih dahulu.'));
-                }
-
-                return new Promise((resolve, reject) => {
-                    const requestId = `rvision-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-                    const frameName = `rvision-sync-${requestId}`;
-                    const frame = document.createElement('iframe');
-                    frame.name = frameName;
-                    frame.title = 'Google Sheets sync response';
-                    frame.style.display = 'none';
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = GOOGLE_SHEETS_WEB_APP_URL;
-                    form.target = frameName;
-                    form.enctype = 'application/x-www-form-urlencoded';
-                    form.style.display = 'none';
-                    const fields = {
-                        action,
-                        requestId,
-                        secret,
-                        payload: JSON.stringify(payload || {})
-                    };
-                    Object.entries(fields).forEach(([name, value]) => {
-                        const input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = name;
-                        input.value = value;
-                        form.appendChild(input);
-                    });
-                    let timeoutId;
-                    const cleanup = () => {
-                        window.clearTimeout(timeoutId);
-                        window.removeEventListener('message', onMessage);
-                        form.remove();
-                        frame.remove();
-                    };
-                    const onMessage = event => {
-                        if (event.origin !== 'null' && event.origin !== 'https://script.google.com' && !event.origin.endsWith('.googleusercontent.com')) return;
-                        if (!event.data || event.data.requestId !== requestId || !event.data.response) return;
-                        cleanup();
-                        const response = event.data.response;
-                        if (response.ok !== true) {
-                            reject(new Error(response.error || 'Google Sheets menolak permintaan.'));
-                            return;
-                        }
-                        resolve(response.data);
-                    };
-                    window.addEventListener('message', onMessage);
-                    timeoutId = window.setTimeout(() => {
-                        cleanup();
-                        reject(new Error('Waktu tunggu sinkronisasi admin habis.'));
-                    }, 20000);
-                    document.body.append(frame, form);
-                    form.submit();
-                });
-            }
-
-            async function connectGoogleSheets() {
-                if (!isGoogleSheetsConfigured()) {
-                    setGoogleSheetsSyncStatus('URL Web App belum dipasang. Setelah Apps Script di-deploy, URL perlu ditambahkan ke file website.', true);
-                    return;
-                }
-                const secretInput = document.getElementById('google-sheets-secret');
-                const secret = secretInput ? secretInput.value.trim() : '';
-                if (!secret) {
-                    setGoogleSheetsSyncStatus('Masukkan kunci admin yang dibuat di Apps Script.', true);
-                    if (secretInput) secretInput.focus();
-                    return;
-                }
-                googleSheetsAdminSecret = secret;
-                saveGoogleSheetsSecret(secret);
-                await loadGoogleSheetsAdminData(true);
-            }
-
-            async function loadGoogleSheetsAdminData(seedLocalData) {
-                if (googleSheetsAdminSyncInProgress) return;
-                if (!googleSheetsAdminSecret) {
-                    googleSheetsAdminSecret = getSavedGoogleSheetsSecret();
-                }
-                if (!googleSheetsAdminSecret) {
-                    setGoogleSheetsConnectionUi(false);
-                    setGoogleSheetsSyncStatus('Masukkan kunci admin untuk memuat data privat dan mengelola spreadsheet.', true);
-                    return;
-                }
-                googleSheetsAdminSyncInProgress = true;
-                setGoogleSheetsSyncStatus('Menghubungkan dan memuat data Google Sheets...', false);
+            async function refreshCloudflarePublicData() {
+                if (!isCloudflareConfigured() || cloudflarePublicSyncInProgress) return false;
+                cloudflarePublicSyncInProgress = true;
                 try {
-                    const data = await postGoogleSheetsAction('load', {
-                        localSales: seedLocalData ? salesRecords : [],
-                        localTestimonials: seedLocalData ? customerTestimonials : []
+                    const response = await fetch(`${CLOUDFLARE_WORKER_URL}/api/public`, {
+                        headers: { Accept: 'application/json' },
+                        cache: 'no-store'
                     });
-                    applyGoogleSheetsData(data, true);
-                    setGoogleSheetsConnectionUi(true);
-                    setGoogleSheetsSyncStatus(
-                        googleSheetsSecretStorageWarning
-                            ? 'Tersambung untuk sesi ini, tetapi browser tidak dapat menyimpan kunci otomatis.'
-                            : 'Tersambung. Perubahan admin dan spreadsheet akan disinkronkan bersama.',
-                        googleSheetsSecretStorageWarning
-                    );
-                    const secretInput = document.getElementById('google-sheets-secret');
-                    if (secretInput) secretInput.value = '';
-                } catch (error) {
-                    console.error('Sinkronisasi admin Google Sheets gagal.', error);
-                    if (error.message === 'Kunci admin tidak valid.') {
-                        googleSheetsAdminSecret = '';
-                        clearSavedGoogleSheetsSecret();
+                    const result = await response.json();
+                    if (!response.ok || result.ok !== true) {
+                        throw new Error(result.error || 'Cloudflare gagal mengirim data publik.');
                     }
-                    setGoogleSheetsConnectionUi(false);
-                    setGoogleSheetsSyncStatus(`Gagal tersambung: ${error.message}`, true);
+                    applyCloudflareData(result.data, false);
+                    return true;
+                } catch (error) {
+                    console.error('Sinkronisasi data publik Cloudflare gagal.', error);
+                    setCloudflareSyncStatus(`Gagal memuat data: ${error.message}`, true);
+                    return false;
                 } finally {
-                    googleSheetsAdminSyncInProgress = false;
+                    cloudflarePublicSyncInProgress = false;
                 }
             }
 
-            function disconnectGoogleSheets() {
-                googleSheetsAdminSecret = '';
-                const secretInput = document.getElementById('google-sheets-secret');
-                if (secretInput) secretInput.value = '';
-                clearSavedGoogleSheetsSecret();
-                googleSheetsSecretStorageWarning = false;
-                setGoogleSheetsConnectionUi(false);
-                setGoogleSheetsSyncStatus(
-                    isGoogleSheetsConfigured()
-                        ? 'Kunci admin dihapus dari browser ini. Masukkan kembali untuk menyambungkan.'
-                        : 'URL Web App belum dipasang. Sinkronisasi Google Sheets belum aktif.',
-                    false
-                );
+            async function postCloudflareAction(action, payload) {
+                const endpointByAction = {
+                    load: '/api/admin/data',
+                    savePrices: '/api/admin/prices',
+                    saveWhatsApp: '/api/admin/whatsapp',
+                    saveSocial: '/api/admin/social',
+                    addSale: '/api/admin/sales/add',
+                    deleteSale: '/api/admin/sales/delete',
+                    addTestimonial: '/api/admin/testimonials/add',
+                    deleteTestimonial: '/api/admin/testimonials/delete'
+                };
+                const endpoint = endpointByAction[action];
+                if (!endpoint) throw new Error('Aksi admin tidak dikenal.');
+                const response = await fetch(`${CLOUDFLARE_WORKER_URL}${endpoint}`, {
+                    method: action === 'load' ? 'GET' : 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        ...(action === 'load' ? {} : { 'Content-Type': 'application/json' }),
+                        Authorization: `Bearer ${cloudflareAdminToken || getSavedCloudflareToken()}`
+                    },
+                    ...(action === 'load' ? {} : { body: JSON.stringify(payload || {}) }),
+                    cache: 'no-store'
+                });
+                const result = await response.json();
+                if (!response.ok || result.ok !== true) {
+                    if (response.status === 401) {
+                        cloudflareAdminToken = '';
+                        clearSavedCloudflareToken();
+                    }
+                    throw new Error(result.error || 'Permintaan Cloudflare gagal.');
+                }
+                return result.data;
+            }
+
+            async function loadCloudflareAdminData() {
+                if (cloudflareAdminSyncInProgress) return;
+                if (!cloudflareAdminToken) cloudflareAdminToken = getSavedCloudflareToken();
+                if (!cloudflareAdminToken) {
+                    setCloudflareSyncStatus('Masuk dengan PIN admin untuk mengelola data Cloudflare.', true);
+                    return;
+                }
+                cloudflareAdminSyncInProgress = true;
+                setCloudflareSyncStatus('Memuat data admin dari Cloudflare D1...', false);
+                try {
+                    const data = await postCloudflareAction('load');
+                    applyCloudflareData(data, true);
+                    setCloudflareSyncStatus('Terhubung. Data admin tersimpan di Cloudflare D1.', false);
+                } catch (error) {
+                    console.error('Gagal memuat data admin dari Cloudflare.', error);
+                    setCloudflareSyncStatus(`Gagal memuat data admin: ${error.message}`, true);
+                } finally {
+                    cloudflareAdminSyncInProgress = false;
+                }
+            }
+
+            function disconnectCloudflare() {
+                cloudflareAdminToken = '';
+                clearSavedCloudflareToken();
+                const pinViewEl = document.getElementById('admin-pin-view');
+                const contentViewEl = document.getElementById('admin-content-view');
+                if (pinViewEl) pinViewEl.classList.remove('hidden');
+                if (contentViewEl) contentViewEl.classList.add('hidden');
+                setCloudflareSyncStatus('Sesi admin sudah keluar. Data tetap tersimpan di Cloudflare D1.', false);
             }
 
             function updateWaLinks() {
@@ -2855,40 +2728,22 @@
                     nextEnabled[platform] = document.getElementById(`admin-social-${platform}-enabled`).checked;
                 }
 
-                if (isGoogleSheetsConfigured() && !googleSheetsAdminSecret) {
-                    setSocialStatus('Hubungkan Google Sheets terlebih dahulu sebelum menyimpan tautan.', true);
+                if (!isCloudflareConfigured() || !cloudflareAdminToken) {
+                    setSocialStatus('Masuk ke panel admin sebelum menyimpan tautan ke Cloudflare.', true);
                     return;
                 }
-                if (isGoogleSheetsConfigured()) {
-                    try {
-                        const socialSettings = {};
-                        for (const platform of ['instagram', 'tiktok', 'youtube']) {
-                            socialSettings[platform] = { url: nextLinks[platform], enabled: nextEnabled[platform] };
-                        }
-                        const data = await postGoogleSheetsAction('saveSocial', {
-                            social: socialSettings
-                        });
-                        applyGoogleSheetsData(data, false);
-                        setSocialStatus('Tautan dan pengaturan ON/OFF berhasil disimpan ke Google Sheets.', false);
-                    } catch (error) {
-                        console.error('Tautan media sosial gagal disimpan ke Google Sheets.', error);
-                        setSocialStatus(`Tautan gagal disinkronkan: ${error.message}`, true);
-                    }
-                    return;
-                }
-
                 try {
-                    localStorage.setItem(SOCIAL_LINKS_STORAGE_KEY, JSON.stringify({ ...nextLinks, enabled: nextEnabled }));
+                    const socialSettings = {};
+                    for (const platform of ['instagram', 'tiktok', 'youtube']) {
+                        socialSettings[platform] = { url: nextLinks[platform], enabled: nextEnabled[platform] };
+                    }
+                    const data = await postCloudflareAction('saveSocial', { social: socialSettings });
+                    applyCloudflareData(data, false);
+                    setSocialStatus('Tautan dan pengaturan ON/OFF berhasil disimpan ke Cloudflare D1.', false);
                 } catch (error) {
-                    console.error('Tautan media sosial gagal disimpan.', error);
-                    setSocialStatus('Tautan gagal disimpan. Periksa ruang penyimpanan browser.', true);
-                    return;
+                    console.error('Tautan media sosial gagal disimpan ke Cloudflare D1.', error);
+                    setSocialStatus(`Tautan gagal disimpan: ${error.message}`, true);
                 }
-
-                socialLinks = nextLinks;
-                socialLinksEnabled = nextEnabled;
-                renderSocialLinks();
-                setSocialStatus('Tersimpan di browser ini saja. Hubungkan Google Sheets agar dapat diakses lintas perangkat.', false);
             }
 
             function loadCustomerTestimonials() {
@@ -3011,34 +2866,24 @@
                     return false;
                 }
 
-                if (isGoogleSheetsConfigured()) {
-                    if (!googleSheetsAdminSecret) {
-                        setTestimonialStatus('Hubungkan Google Sheets terlebih dahulu sebelum menambah testimoni.', true);
-                        return false;
-                    }
+                if (!isCloudflareConfigured() || !cloudflareAdminToken) {
+                    setTestimonialStatus('Masuk ke panel admin sebelum menyimpan testimoni ke Cloudflare.', true);
+                    return false;
+                }
+                try {
+                    customerTestimonials = await postCloudflareAction('addTestimonial', { record });
                     try {
-                        const testimonials = await postGoogleSheetsAction('addTestimonial', { record });
-                        customerTestimonials = testimonials;
-                        if (!persistCustomerTestimonials()) return false;
-                        renderCustomerTestimonials();
-                        form.reset();
-                        setTestimonialStatus('Testimoni berhasil disimpan ke Google Sheets.', false);
+                        localStorage.setItem(TESTIMONIALS_STORAGE_KEY, JSON.stringify(customerTestimonials));
                     } catch (error) {
-                        console.error('Testimoni gagal disimpan ke Google Sheets.', error);
-                        setTestimonialStatus(`Testimoni gagal disinkronkan: ${error.message}`, true);
+                        console.error('Cache testimoni dari Cloudflare tidak dapat diperbarui.', error);
                     }
-                    return false;
+                    renderCustomerTestimonials();
+                    form.reset();
+                    setTestimonialStatus('Testimoni berhasil disimpan ke Cloudflare D1.', false);
+                } catch (error) {
+                    console.error('Testimoni gagal disimpan ke Cloudflare D1.', error);
+                    setTestimonialStatus(`Testimoni gagal disimpan: ${error.message}`, true);
                 }
-
-                customerTestimonials.unshift(record);
-                if (!persistCustomerTestimonials()) {
-                    customerTestimonials.shift();
-                    return false;
-                }
-
-                renderCustomerTestimonials();
-                form.reset();
-                setTestimonialStatus('Tersimpan di browser ini saja. Hubungkan Google Sheets agar dapat diakses lintas perangkat.', false);
                 return false;
             }
 
@@ -3046,32 +2891,23 @@
                 const index = customerTestimonials.findIndex(testimonial => testimonial.id === id);
                 if (index < 0 || !window.confirm('Hapus testimoni ini?')) return;
 
-                if (isGoogleSheetsConfigured()) {
-                    if (!googleSheetsAdminSecret) {
-                        setTestimonialStatus('Hubungkan Google Sheets terlebih dahulu sebelum menghapus testimoni.', true);
-                        return;
-                    }
+                if (!isCloudflareConfigured() || !cloudflareAdminToken) {
+                    setTestimonialStatus('Masuk ke panel admin sebelum menghapus testimoni dari Cloudflare.', true);
+                    return;
+                }
+                try {
+                    customerTestimonials = await postCloudflareAction('deleteTestimonial', { id });
                     try {
-                        const testimonials = await postGoogleSheetsAction('deleteTestimonial', { id });
-                        customerTestimonials = testimonials;
-                        persistCustomerTestimonials();
-                        renderCustomerTestimonials();
-                        setTestimonialStatus('Testimoni berhasil dihapus dari Google Sheets.', false);
+                        localStorage.setItem(TESTIMONIALS_STORAGE_KEY, JSON.stringify(customerTestimonials));
                     } catch (error) {
-                        console.error('Testimoni gagal dihapus dari Google Sheets.', error);
-                        setTestimonialStatus(`Testimoni gagal dihapus: ${error.message}`, true);
+                        console.error('Cache testimoni dari Cloudflare tidak dapat diperbarui.', error);
                     }
-                    return;
-                }
-
-                const [removed] = customerTestimonials.splice(index, 1);
-                if (!persistCustomerTestimonials()) {
-                    customerTestimonials.splice(index, 0, removed);
                     renderCustomerTestimonials();
-                    return;
+                    setTestimonialStatus('Testimoni berhasil dihapus dari Cloudflare D1.', false);
+                } catch (error) {
+                    console.error('Testimoni gagal dihapus dari Cloudflare D1.', error);
+                    setTestimonialStatus(`Testimoni gagal dihapus: ${error.message}`, true);
                 }
-                renderCustomerTestimonials();
-                setTestimonialStatus('Terhapus dari browser ini saja. Hubungkan Google Sheets agar perubahan berlaku lintas perangkat.', false);
             }
 
             function renderGaransiWaOptions() {
@@ -3730,32 +3566,19 @@
                 if (!Number.isInteger(recordIndex) || recordIndex < 0 || recordIndex >= salesRecords.length) return;
                 if (!window.confirm('Hapus catatan penjualan ini? Tindakan ini tidak dapat dibatalkan.')) return;
 
-                if (isGoogleSheetsConfigured()) {
-                    if (!googleSheetsAdminSecret) {
-                        setSalesStatus('Hubungkan Google Sheets terlebih dahulu sebelum menghapus data.', true);
-                        return;
-                    }
-                    try {
-                        salesRecords = await postGoogleSheetsAction('deleteSale', { id: salesRecords[recordIndex].id });
-                        persistSalesRecords();
-                        renderSalesRecords();
-                        setSalesStatus('Catatan penjualan berhasil dihapus dari Google Sheets.', false);
-                    } catch (error) {
-                        console.error('Catatan penjualan gagal dihapus dari Google Sheets.', error);
-                        setSalesStatus(`Data gagal dihapus: ${error.message}`, true);
-                    }
+                if (!isCloudflareConfigured() || !cloudflareAdminToken) {
+                    setSalesStatus('Masuk ke panel admin sebelum menghapus data penjualan dari Cloudflare.', true);
                     return;
                 }
-
-                const [removedRecord] = salesRecords.splice(recordIndex, 1);
-                if (!persistSalesRecords()) {
-                    salesRecords.splice(recordIndex, 0, removedRecord);
+                try {
+                    salesRecords = await postCloudflareAction('deleteSale', { id: salesRecords[recordIndex].id });
+                    persistSalesRecords();
                     renderSalesRecords();
-                    return;
+                    setSalesStatus('Catatan penjualan berhasil dihapus dari Cloudflare D1.', false);
+                } catch (error) {
+                    console.error('Catatan penjualan gagal dihapus dari Cloudflare D1.', error);
+                    setSalesStatus(`Data gagal dihapus: ${error.message}`, true);
                 }
-
-                renderSalesRecords();
-                setSalesStatus('Terhapus dari browser ini saja. Hubungkan Google Sheets agar perubahan berlaku lintas perangkat.', false);
             }
 
             function loadSalesRecords() {
@@ -3830,37 +3653,22 @@
                     return false;
                 }
 
-                if (isGoogleSheetsConfigured()) {
-                    if (!googleSheetsAdminSecret) {
-                        setSalesStatus('Hubungkan Google Sheets terlebih dahulu sebelum menyimpan penjualan.', true);
-                        return false;
-                    }
-                    try {
-                        salesRecords = await postGoogleSheetsAction('addSale', { record });
-                        persistSalesRecords();
-                        renderSalesRecords();
-                        form.reset();
-                        document.getElementById('sale-date').value = getLocalDateInputValue();
-                        document.getElementById('sale-quantity').value = '1';
-                        setSalesStatus('Data penjualan berhasil disimpan ke Google Sheets.', false);
-                    } catch (error) {
-                        console.error('Data penjualan gagal disimpan ke Google Sheets.', error);
-                        setSalesStatus(`Data penjualan gagal disinkronkan: ${error.message}`, true);
-                    }
+                if (!isCloudflareConfigured() || !cloudflareAdminToken) {
+                    setSalesStatus('Masuk ke panel admin sebelum menyimpan penjualan ke Cloudflare.', true);
                     return false;
                 }
-
-                salesRecords.unshift(record);
-                if (!persistSalesRecords()) {
-                    salesRecords.shift();
-                    return false;
+                try {
+                    salesRecords = await postCloudflareAction('addSale', { record });
+                    persistSalesRecords();
+                    renderSalesRecords();
+                    form.reset();
+                    document.getElementById('sale-date').value = getLocalDateInputValue();
+                    document.getElementById('sale-quantity').value = '1';
+                    setSalesStatus('Data penjualan berhasil disimpan ke Cloudflare D1.', false);
+                } catch (error) {
+                    console.error('Data penjualan gagal disimpan ke Cloudflare D1.', error);
+                    setSalesStatus(`Data penjualan gagal disimpan: ${error.message}`, true);
                 }
-
-                renderSalesRecords();
-                form.reset();
-                document.getElementById('sale-date').value = getLocalDateInputValue();
-                document.getElementById('sale-quantity').value = '1';
-                setSalesStatus('Tersimpan di browser ini saja. Hubungkan Google Sheets agar dapat diakses lintas perangkat.', false);
                 return false;
             }
 
@@ -3975,9 +3783,9 @@
                     }
                     return;
                 }
-                if (!isGoogleSheetsConfigured()) {
+                if (!isCloudflareConfigured()) {
                     if (pinErrorEl) {
-                        pinErrorEl.textContent = 'Koneksi Apps Script belum tersedia.';
+                        pinErrorEl.textContent = 'URL Cloudflare Worker belum dikonfigurasi.';
                         pinErrorEl.classList.remove('hidden');
                     }
                     return;
@@ -3986,8 +3794,18 @@
                 if (submitButton) submitButton.disabled = true;
                 if (pinErrorEl) pinErrorEl.classList.add('hidden');
                 try {
-                    const result = await postGoogleSheetsAction('verifyAdminPin', { pin: enteredPin });
-                    if (!result || result.authorized !== true) throw new Error('PIN Admin tidak valid.');
+                    const response = await fetch(`${CLOUDFLARE_WORKER_URL}/api/admin/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                        body: JSON.stringify({ pin: enteredPin }),
+                        cache: 'no-store'
+                    });
+                    const result = await response.json();
+                    if (!response.ok || result.ok !== true || !result.data || !result.data.token) {
+                        throw new Error(result.error || 'PIN Admin tidak valid.');
+                    }
+                    cloudflareAdminToken = result.data.token;
+                    saveCloudflareToken(cloudflareAdminToken);
                     if (pinInputEl) pinInputEl.value = '';
                     setAdminPinVisibility(false);
                     if (pinViewEl) pinViewEl.classList.add('hidden');
@@ -3996,10 +3814,7 @@
                     if (waInput2El) waInput2El.value = adminWaNumber2;
                     switchAdminSection('wa');
                     renderAdminProductEditors();
-                    if (isGoogleSheetsConfigured()) {
-                        googleSheetsAdminSecret = getSavedGoogleSheetsSecret();
-                        if (googleSheetsAdminSecret) loadGoogleSheetsAdminData(false);
-                    }
+                    await loadCloudflareAdminData();
                 } catch (error) {
                     if (pinInputEl) pinInputEl.value = '';
                     setAdminPinVisibility(false);
@@ -4023,99 +3838,56 @@
                 const nextNumber1 = cleaned1 || adminWaNumber;
                 const nextNumber2 = cleaned2 || adminWaNumber2;
 
-                if (isGoogleSheetsConfigured()) {
-                    if (!googleSheetsAdminSecret) {
-                        setGoogleSheetsSyncStatus('Hubungkan Google Sheets terlebih dahulu sebelum menyimpan nomor WhatsApp.', true);
-                        return;
-                    }
-                    try {
-                        const data = await postGoogleSheetsAction('saveWhatsApp', {
-                            whatsapp: {
-                                numbers: [nextNumber1, nextNumber2],
-                                enabled: [isAdmin1Enabled, isAdmin2Enabled]
-                            }
-                        });
-                        applyGoogleSheetsData(data, false);
-                        if (waStatusEl) {
-                            waStatusEl.innerText = 'Nomor WhatsApp dan status ON/OFF berhasil disimpan ke Google Sheets.';
-                            waStatusEl.classList.remove('hidden');
-                        }
-                    } catch (error) {
-                        console.error('Pengaturan WhatsApp gagal disimpan ke Google Sheets.', error);
-                        setGoogleSheetsSyncStatus(`Nomor WhatsApp gagal disinkronkan: ${error.message}`, true);
-                    }
+                if (!isCloudflareConfigured() || !cloudflareAdminToken) {
+                    setCloudflareSyncStatus('Masuk ke panel admin sebelum menyimpan nomor WhatsApp.', true);
                     return;
                 }
-
-                adminWaNumber = nextNumber1;
-                adminWaNumber2 = nextNumber2;
-                waInputEl.value = adminWaNumber;
-                if (waInput2El) waInput2El.value = adminWaNumber2;
                 try {
-                    localStorage.setItem('mg_vision_wa', adminWaNumber);
-                    localStorage.setItem('mg_vision_wa_2', adminWaNumber2);
-                    localStorage.setItem('mg_vision_admin1_enabled', String(isAdmin1Enabled));
-                    localStorage.setItem('mg_vision_admin2_enabled', String(isAdmin2Enabled));
-                } catch (error) {
-                    console.error('Nomor WhatsApp gagal disimpan ke browser.', error);
+                    const data = await postCloudflareAction('saveWhatsApp', {
+                        whatsapp: {
+                            numbers: [nextNumber1, nextNumber2],
+                            enabled: [isAdmin1Enabled, isAdmin2Enabled]
+                        }
+                    });
+                    applyCloudflareData(data, false);
                     if (waStatusEl) {
-                        waStatusEl.innerText = 'Nomor WhatsApp gagal disimpan di browser.';
+                        waStatusEl.innerText = 'Nomor WhatsApp dan status ON/OFF berhasil disimpan ke Cloudflare D1.';
                         waStatusEl.classList.remove('hidden');
                     }
-                    return;
-                }
-                updateWaLinks();
-                applyAdminVisibility();
-                if (waStatusEl) {
-                    waStatusEl.innerText = 'Tersimpan di browser ini saja. Hubungkan Google Sheets agar dapat diakses lintas perangkat.';
-                    waStatusEl.classList.remove('hidden');
+                } catch (error) {
+                    console.error('Pengaturan WhatsApp gagal disimpan ke Cloudflare D1.', error);
+                    setCloudflareSyncStatus(`Nomor WhatsApp gagal disimpan: ${error.message}`, true);
                 }
             }
 
             async function resetPricesToDefault() {
                 const previousProducts = JSON.parse(JSON.stringify(products));
                 const defaultReset = JSON.parse(JSON.stringify(defaultProducts));
-                if (isGoogleSheetsConfigured()) {
-                    if (!googleSheetsAdminSecret) {
-                        setGoogleSheetsSyncStatus('Hubungkan Google Sheets terlebih dahulu sebelum mereset harga.', true);
-                        return;
-                    }
-                    try {
-                        const data = await postGoogleSheetsAction('savePrices', { products: defaultReset });
-                        applyGoogleSheetsData(data, false);
-                    } catch (error) {
-                        console.error('Reset harga gagal disimpan ke Google Sheets.', error);
-                        products = previousProducts;
-                        renderAdminProductEditors();
-                        filterCategory(activeCategory);
-                        setGoogleSheetsSyncStatus(`Reset harga gagal disinkronkan: ${error.message}`, true);
-                        return;
-                    }
-                } else {
-                    products = defaultReset;
+                if (!isCloudflareConfigured() || !cloudflareAdminToken) {
+                    setCloudflareSyncStatus('Masuk ke panel admin sebelum mereset harga.', true);
+                    return;
                 }
-                if (!isGoogleSheetsConfigured()) {
-                    try {
-                        localStorage.setItem('mg_vision_products', JSON.stringify(products));
-                    } catch (error) {
-                        console.error('Harga default gagal disimpan ke browser.', error);
-                        products = previousProducts;
-                        setGoogleSheetsSyncStatus('Harga default gagal disimpan ke browser.', true);
-                        return;
-                    }
+                try {
+                    const data = await postCloudflareAction('savePrices', { products: defaultReset });
+                    applyCloudflareData(data, false);
+                } catch (error) {
+                    console.error('Reset harga gagal disimpan ke Cloudflare D1.', error);
+                    products = previousProducts;
+                    renderAdminProductEditors();
+                    filterCategory(activeCategory);
+                    setCloudflareSyncStatus(`Reset harga gagal disimpan: ${error.message}`, true);
+                    return;
                 }
                 const priceStatusEl = document.getElementById('price-status-msg');
                 if (priceStatusEl) {
-                    priceStatusEl.innerText = isGoogleSheetsConfigured()
-                        ? 'Harga default berhasil disimpan ke Google Sheets.'
-                        : 'Harga default tersimpan di browser ini saja.';
+                    priceStatusEl.innerText = 'Harga default berhasil disimpan ke Cloudflare D1.';
                     priceStatusEl.classList.remove('hidden');
                 }
                 renderAdminProductEditors();
                 filterCategory(activeCategory);
             }
 
-            function applyProductPricesFromInputs(persistLocally) {
+            function applyProductPricesFromInputs() {
                 products.forEach(p => {
                     const s7d = document.getElementById(`adm-${p.id}-s-7d`);
                     const s1m = document.getElementById(`adm-${p.id}-s-1m`);
@@ -4140,48 +3912,31 @@
                     }
                 });
 
-                if (persistLocally) {
-                    try {
-                        localStorage.setItem('mg_vision_products', JSON.stringify(products));
-                    } catch (error) {
-                        console.error('Harga produk gagal disimpan ke browser.', error);
-                        const priceStatusEl = document.getElementById('price-status-msg');
-                        if (priceStatusEl) {
-                            priceStatusEl.innerText = 'Harga gagal disimpan. Periksa ruang penyimpanan browser.';
-                            priceStatusEl.classList.remove('hidden');
-                        }
-                        return false;
-                    }
-                }
                 filterCategory(activeCategory);
                 return true;
             }
 
             async function saveAdminPrices() {
                 const previousProducts = JSON.parse(JSON.stringify(products));
-                if (isGoogleSheetsConfigured() && !googleSheetsAdminSecret) {
-                    setGoogleSheetsSyncStatus('Hubungkan Google Sheets terlebih dahulu sebelum menyimpan harga.', true);
+                if (!isCloudflareConfigured() || !cloudflareAdminToken) {
+                    setCloudflareSyncStatus('Masuk ke panel admin sebelum menyimpan harga.', true);
                     return;
                 }
-                if (!applyProductPricesFromInputs(!isGoogleSheetsConfigured())) return;
-                if (isGoogleSheetsConfigured()) {
-                    try {
-                        const data = await postGoogleSheetsAction('savePrices', { products });
-                        applyGoogleSheetsData(data, false);
-                    } catch (error) {
-                        console.error('Harga produk gagal disimpan ke Google Sheets.', error);
-                        products = previousProducts;
-                        renderAdminProductEditors();
-                        filterCategory(activeCategory);
-                        setGoogleSheetsSyncStatus(`Harga produk gagal disinkronkan: ${error.message}`, true);
-                        return;
-                    }
+                if (!applyProductPricesFromInputs()) return;
+                try {
+                    const data = await postCloudflareAction('savePrices', { products });
+                    applyCloudflareData(data, false);
+                } catch (error) {
+                    console.error('Harga produk gagal disimpan ke Cloudflare D1.', error);
+                    products = previousProducts;
+                    renderAdminProductEditors();
+                    filterCategory(activeCategory);
+                    setCloudflareSyncStatus(`Harga produk gagal disimpan: ${error.message}`, true);
+                    return;
                 }
                 const priceStatusEl = document.getElementById('price-status-msg');
                 if (priceStatusEl) {
-                    priceStatusEl.innerText = isGoogleSheetsConfigured()
-                        ? 'Perubahan harga produk berhasil disimpan ke Google Sheets.'
-                        : 'Tersimpan di browser ini saja. Hubungkan Google Sheets agar dapat diakses lintas perangkat.';
+                    priceStatusEl.innerText = 'Perubahan harga produk berhasil disimpan ke Cloudflare D1.';
                     priceStatusEl.classList.remove('hidden');
                 }
             }
@@ -4338,34 +4093,34 @@
                 loadStoredData();
                 renderProducts(products);
                 initializeHeroCarousel();
-                if (isGoogleSheetsConfigured()) {
-                    setGoogleSheetsSyncStatus('Memuat harga, kontak, media sosial, dan testimoni dari Google Sheets...', false);
-                    refreshGoogleSheetsPublicData().then(function(success) {
-                        if (success) setGoogleSheetsSyncStatus('Data publik berhasil dimuat dari Google Sheets.', false);
+                if (isCloudflareConfigured()) {
+                    setCloudflareSyncStatus('Memuat harga, kontak, media sosial, dan testimoni dari Cloudflare D1...', false);
+                    refreshCloudflarePublicData().then(function(success) {
+                        if (success) setCloudflareSyncStatus('Data publik berhasil dimuat dari Cloudflare D1.', false);
                     });
                 }
             };
 
-            function refreshGoogleSheetsOnReturn() {
-                if (!isGoogleSheetsConfigured() || document.visibilityState === 'hidden') return;
-                refreshGoogleSheetsPublicData().then(function(success) {
+            function refreshCloudflareOnReturn() {
+                if (!isCloudflareConfigured() || document.visibilityState === 'hidden') return;
+                refreshCloudflarePublicData().then(function(success) {
                     if (!success) return;
                     const adminContent = document.getElementById('admin-content-view');
-                    if (adminContent && !adminContent.classList.contains('hidden') && googleSheetsAdminSecret) {
-                        loadGoogleSheetsAdminData(false);
+                    if (adminContent && !adminContent.classList.contains('hidden') && cloudflareAdminToken) {
+                        loadCloudflareAdminData(false);
                     }
                 });
             }
 
-            window.addEventListener('focus', refreshGoogleSheetsOnReturn);
-            document.addEventListener('visibilitychange', refreshGoogleSheetsOnReturn);
+            window.addEventListener('focus', refreshCloudflareOnReturn);
+            document.addEventListener('visibilitychange', refreshCloudflareOnReturn);
             window.setInterval(function() {
-                if (!isGoogleSheetsConfigured() || document.visibilityState === 'hidden') return;
+                if (!isCloudflareConfigured() || document.visibilityState === 'hidden') return;
                 const adminContent = document.getElementById('admin-content-view');
-                if (adminContent && !adminContent.classList.contains('hidden') && googleSheetsAdminSecret) {
-                    loadGoogleSheetsAdminData(false);
+                if (adminContent && !adminContent.classList.contains('hidden') && cloudflareAdminToken) {
+                    loadCloudflareAdminData(false);
                 } else {
-                    refreshGoogleSheetsPublicData();
+                    refreshCloudflarePublicData();
                 }
             }, 60000);
         </script>
